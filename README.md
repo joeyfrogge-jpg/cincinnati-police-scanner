@@ -1,51 +1,49 @@
 # Cincinnati Police Scanner
 
-Exact dark-theme live scanner UI for **Cincinnati, Hamilton County, and Delhi Township, Ohio** only.
+Exact dark-theme live scanner for **Cincinnati, Hamilton County, and Delhi Township, Ohio** only.
 
-## Live App
+## Open the app
 
-**[Open Scanner](https://joeyfrogge-jpg.github.io/cincinnati-police-scanner/)**
+**[https://joeyfrogge-jpg.github.io/cincinnati-police-scanner/](https://joeyfrogge-jpg.github.io/cincinnati-police-scanner/)**
 
-(Enable GitHub Pages: Settings → Pages → Deploy from branch `main` / root.)
+(If the link 404s: Repo → Settings → Pages → Deploy from branch `main` / root → Save.)
 
-## Features
+## How to hear live audio
 
-- Pixel-matched dark UI from the provided design (no emojis — SVG icons only)
-- Live free Broadcastify feeds restricted to Cincinnati / Hamilton County / Delhi Township
-- Categories: Dispatch (Primary), Police (Law Enforcement), Fire / EMS, Traffic, Metro, Favorites
-- Interactive dark map that updates to the selected feed location
-- Live waveform, transport controls, volume UI, bottom navigation
-- Standalone single-file app (HTML + CSS + JS) — works offline for UI, live audio requires network
+Broadcastify no longer allows third-party audio embeds. Free listening works like this:
 
-## Free Live Feeds Used
-
-| Category | Feed | Broadcastify ID | Notes |
-|----------|------|-----------------|-------|
-| Dispatch / Police / Traffic / Metro | Hamilton County Police, Fire & EMS Dispatch | 14527 | Primary. Includes Delhi Township PD/FD, Norwood, county law East/West/Central, firegrounds |
-| Fire / EMS | Cincinnati Fire | 5184 | City CFD Zone A EMS + Fire Zones B–J |
-| Police (secondary) | Cincinnati Police | 32619 | Currently offline / deleted on Broadcastify |
-
-All feeds are free public streams. The dedicated Cincinnati Police feed has been offline for an extended period; law traffic for the city and Delhi is carried on the Hamilton County primary feed (Ohio MARCS-IP).
+1. Select a channel (Dispatch, Police, Fire/EMS, or **Delhi Township**).
+2. The official Broadcastify player loads in the player card.
+3. Tap **LISTEN LIVE — TAP TO HEAR** (or the circular play button) to open the free live stream.
+4. A short ad may play first on free feeds; then live radio starts.
 
 ## Delhi Township
 
-Delhi is covered on the Hamilton County feed:
+Delhi is fully covered on the free **Hamilton County** feed (Broadcastify ID **14527**):
 
-- Delhi PD — TG 21203 (31 DLHI PD)
-- Delhi FD — TG 21204
-- Western Law Dispatch (31 LE WEST) covers the Delhi area
+| Channel | Talkgroup | How to select in app |
+|---------|-----------|----------------------|
+| Delhi PD | 21203 (31 DLHI PD) | **Police → Delhi Township PD** or **Dispatch → Delhi Township** |
+| Delhi Fire | 21204 | **Fire / EMS → Delhi Township Fire** |
 
-## Design Notes
+Selecting any Delhi channel centers the map on Delhi Township (39.0923° N, 84.6233° W) and loads the same live Hamilton County stream that carries those talkgroups.
 
-- Layout, colors, spacing, card style, category grid, quick controls, and bottom nav match the attached screenshot
-- Map uses CartoDB dark tiles + Leaflet
-- Waveform is animated when a live feed is selected
-- Play opens the official Broadcastify free player (most reliable free path; static MP3 streams require Broadcastify Premium)
+## Free feeds used (Cincinnati area only)
+
+| Feed | ID | Status |
+|------|-----|--------|
+| Hamilton County Police, Fire & EMS Dispatch | 14527 | Online — primary (includes Delhi) |
+| Cincinnati Fire | 5184 | Online |
+| Cincinnati Police | 32619 | Offline on Broadcastify |
+
+## Features
+
+- Design matched to the provided screenshot (SVG icons only, no emojis)
+- Working dark map (Leaflet + Carto dark tiles) that moves with the selected feed
+- Categories: Dispatch, Police, Fire/EMS, Traffic, Metro, Favorites
+- Explicit Delhi Township entries under Dispatch, Police, and Fire/EMS
+- Standalone single-file app for GitHub Pages
 
 ## Disclaimer
 
-For educational and hobby listening only. Do not interfere with emergency communications. Feeds may go offline or channels may become encrypted without notice.
-
----
-
-Strictly Cincinnati / Hamilton County / Delhi Township focused.
+Educational and hobby listening only. Do not interfere with emergency communications. Feeds may go offline or become encrypted without notice.

@@ -6,7 +6,7 @@
   <title>Cincinnati Police Scanner</title>
   <meta name="description" content="Live free police, fire & EMS scanner for Cincinnati, Hamilton County and Delhi Township, Ohio">
   <meta name="theme-color" content="#0a0a0a">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <style>
     :root {
       --bg: #0a0a0a;
@@ -14,7 +14,6 @@
       --card2: #1a1a1a;
       --border: #222;
       --blue: #3b82f6;
-      --blue-glow: #2563eb;
       --green: #22c55e;
       --text: #e5e5e5;
       --muted: #8a8a8a;
@@ -36,11 +35,9 @@
       margin: 0 auto;
       min-height: 100vh;
       min-height: 100dvh;
-      position: relative;
       background: #0a0a0a;
     }
 
-    /* Status bar mimic */
     .status-bar {
       height: 44px;
       display: flex;
@@ -55,7 +52,6 @@
     .status-bar .right { display: flex; gap: 5px; align-items: center; }
     .status-bar svg { width: 16px; height: 16px; fill: #fff; }
 
-    /* Header */
     .app-header {
       display: flex;
       align-items: center;
@@ -63,594 +59,253 @@
       padding: 4px 16px 12px;
       flex-shrink: 0;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .brand-icon {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
     .brand-icon svg { width: 32px; height: 32px; }
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.15;
-    }
-    .brand-text .title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: #fff;
-    }
-    .brand-text .sub {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 1.2px;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .brand-text .title { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #fff; }
+    .brand-text .sub { font-size: 10px; font-weight: 500; letter-spacing: 1.2px; color: var(--muted); text-transform: uppercase; }
+    .header-right { display: flex; align-items: center; gap: 14px; }
     .live-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      color: var(--green);
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: var(--green);
     }
     .live-dot {
-      width: 7px;
-      height: 7px;
-      background: var(--green);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--green);
-      animation: pulse 1.6s infinite;
+      width: 7px; height: 7px; background: var(--green); border-radius: 50%;
+      box-shadow: 0 0 8px var(--green); animation: pulse 1.6s infinite;
     }
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(0.85); }
     }
     .icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 36px; height: 36px; border-radius: 50%; background: transparent; border: none;
+      color: var(--muted); display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
     .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-    .icon-btn:active { opacity: 0.7; }
 
-    /* Scrollable main */
     .main-scroll {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 0 14px 100px;
-      -webkit-overflow-scrolling: touch;
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 0 14px 100px; -webkit-overflow-scrolling: touch;
     }
 
-    /* Map card */
+    /* Map */
     .map-card {
-      background: var(--card);
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      margin-bottom: 14px;
-      position: relative;
+      background: var(--card); border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--border); margin-bottom: 14px; position: relative;
     }
     .map-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      z-index: 10;
-      background: linear-gradient(180deg, rgba(10,10,10,0.85) 0%, transparent 100%);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px; position: absolute; top: 0; left: 0; right: 0; z-index: 500;
+      background: linear-gradient(180deg, rgba(10,10,10,0.9) 0%, transparent 100%);
+      pointer-events: none;
     }
-    .map-loc {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .map-header * { pointer-events: auto; }
+    .map-loc { display: flex; align-items: center; gap: 8px; }
     .map-loc svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 1.6; }
-    .map-loc-text {
-      display: flex;
-      flex-direction: column;
-    }
-    .map-loc-text .city {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: 0.3px;
-    }
-    .map-loc-text .coords {
-      font-size: 11px;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-    }
+    .map-loc-text { display: flex; flex-direction: column; }
+    .map-loc-text .city { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: 0.3px; }
+    .map-loc-text .coords { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
     .map-action {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: rgba(30,30,30,0.9);
-      border: 1px solid #333;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #ccc;
+      width: 34px; height: 34px; border-radius: 10px; background: rgba(30,30,30,0.95);
+      border: 1px solid #333; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #ccc;
     }
     .map-action svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-    #map {
-      height: 160px;
-      width: 100%;
-      background: #111;
-    }
+    #map { height: 170px; width: 100%; background: #0d0d0d; }
     .leaflet-control-attribution { display: none !important; }
     .leaflet-control-zoom { display: none !important; }
 
-    /* Live Feed player card */
+    /* Player */
     .player-card {
-      background: var(--card);
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      padding: 16px;
-      margin-bottom: 16px;
+      background: var(--card); border-radius: 16px; border: 1px solid var(--border);
+      padding: 16px; margin-bottom: 16px;
     }
     .player-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
     }
     .player-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--blue);
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 700; letter-spacing: 1px; color: var(--blue);
     }
     .player-label .dot {
-      width: 8px;
-      height: 8px;
-      background: var(--blue);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--blue);
-      animation: pulse 1.6s infinite;
+      width: 8px; height: 8px; background: var(--blue); border-radius: 50%;
+      box-shadow: 0 0 10px var(--blue); animation: pulse 1.6s infinite;
     }
     .signal-icon svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.6; }
 
-    /* Waveform */
     .waveform {
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      margin-bottom: 18px;
-      overflow: hidden;
+      height: 48px; display: flex; align-items: center; justify-content: center;
+      gap: 2px; margin-bottom: 14px; overflow: hidden;
     }
     .wave-bar {
-      width: 3px;
-      background: var(--blue);
-      border-radius: 2px;
-      transition: height 0.15s ease;
-      opacity: 0.85;
+      width: 3px; background: var(--blue); border-radius: 2px;
+      transition: height 0.12s ease; opacity: 0.85;
     }
     .wave-bar.inactive { background: #2a2a2a; height: 8px !important; }
 
-    /* Transport */
     .transport {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 28px;
-      margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 12px;
     }
     .t-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #1e1e1e;
-      border: 1px solid #2a2a2a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #aaa;
+      width: 44px; height: 44px; border-radius: 50%; background: #1e1e1e;
+      border: 1px solid #2a2a2a; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #aaa;
     }
     .t-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
     .t-btn.play {
-      width: 58px;
-      height: 58px;
-      background: transparent;
-      border: 2px solid var(--blue);
-      box-shadow: 0 0 20px rgba(59,130,246,0.35);
-      color: var(--blue);
+      width: 58px; height: 58px; background: transparent;
+      border: 2px solid var(--blue); box-shadow: 0 0 20px rgba(59,130,246,0.35); color: var(--blue);
     }
     .t-btn.play svg { width: 26px; height: 26px; fill: var(--blue); stroke: none; }
     .t-btn:active { transform: scale(0.94); }
 
-    /* Progress */
     .progress-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      font-size: 11px;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+      font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums;
     }
     .progress-track {
-      flex: 1;
-      height: 4px;
-      background: #2a2a2a;
-      border-radius: 4px;
-      position: relative;
-      overflow: hidden;
+      flex: 1; height: 4px; background: #2a2a2a; border-radius: 4px; position: relative; overflow: hidden;
     }
     .progress-fill {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 18%;
-      background: var(--blue);
-      border-radius: 4px;
+      position: absolute; left: 0; top: 0; bottom: 0; width: 12%;
+      background: var(--blue); border-radius: 4px;
     }
     .progress-thumb {
-      position: absolute;
-      top: 50%;
-      left: 18%;
-      width: 12px;
-      height: 12px;
-      background: #fff;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
+      position: absolute; top: 50%; left: 12%; width: 12px; height: 12px;
+      background: #fff; border-radius: 50%; transform: translate(-50%, -50%);
       box-shadow: 0 0 6px rgba(0,0,0,0.5);
     }
 
-    /* Volume */
-    .vol-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .vol-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .vol-row svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.6; flex-shrink: 0; }
-    .vol-track {
-      flex: 1;
-      height: 4px;
-      background: #2a2a2a;
-      border-radius: 4px;
-      position: relative;
-    }
-    .vol-fill {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 70%;
-      background: var(--blue);
-      border-radius: 4px;
-    }
+    .vol-track { flex: 1; height: 4px; background: #2a2a2a; border-radius: 4px; position: relative; }
+    .vol-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 70%; background: var(--blue); border-radius: 4px; }
     .vol-thumb {
-      position: absolute;
-      top: 50%;
-      left: 70%;
-      width: 12px;
-      height: 12px;
-      background: #fff;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
+      position: absolute; top: 50%; left: 70%; width: 12px; height: 12px;
+      background: #fff; border-radius: 50%; transform: translate(-50%, -50%);
     }
 
-    /* Hidden audio / iframe container */
-    .audio-host {
-      display: none;
+    .now-playing {
+      font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; min-height: 18px;
     }
-    .embed-frame {
-      width: 100%;
-      height: 0;
-      border: none;
-      visibility: hidden;
-      position: absolute;
-    }
+    .now-playing strong { color: #ccc; font-weight: 600; }
 
-    /* Categories grid */
+    /* Visible Broadcastify player — this is how free audio is heard */
+    .bcfy-wrap {
+      border-radius: 12px; overflow: hidden; border: 1px solid #2a2a2a;
+      background: #000; margin-bottom: 10px;
+    }
+    .bcfy-wrap iframe {
+      display: block; width: 100%; height: 120px; border: none; background: #000;
+    }
+    .listen-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 12px; border-radius: 12px;
+      background: var(--blue); color: #fff; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.5px; border: none; cursor: pointer; text-decoration: none;
+    }
+    .listen-btn:active { opacity: 0.9; }
+    .listen-btn svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2; }
+
+    /* Categories */
     .cat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 18px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;
     }
     .cat-btn {
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 8px 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
-      text-align: left;
-      position: relative;
+      background: var(--card2); border: 1px solid var(--border); border-radius: 14px;
+      padding: 14px 8px 12px; display: flex; flex-direction: column; align-items: flex-start;
+      gap: 6px; cursor: pointer; text-align: left; position: relative;
     }
     .cat-btn:active { background: #222; }
-    .cat-btn.active {
-      border-color: var(--blue);
-      background: rgba(59,130,246,0.08);
-    }
+    .cat-btn.active { border-color: var(--blue); background: rgba(59,130,246,0.08); }
     .cat-btn .icon-wrap {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 2px;
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; margin-bottom: 2px;
     }
-    .cat-btn .icon-wrap svg {
-      width: 20px;
-      height: 20px;
-      stroke: #ccc;
-      fill: none;
-      stroke-width: 1.6;
-    }
+    .cat-btn .icon-wrap svg { width: 20px; height: 20px; stroke: #ccc; fill: none; stroke-width: 1.6; }
     .cat-btn.active .icon-wrap svg { stroke: var(--blue); }
-    .cat-btn .label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.6px;
-      color: #ddd;
-      text-transform: uppercase;
-    }
-    .cat-btn .sublabel {
-      font-size: 9px;
-      color: var(--muted);
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-    }
-    .cat-btn .chev {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0.4;
-    }
+    .cat-btn .label { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; color: #ddd; text-transform: uppercase; }
+    .cat-btn .sublabel { font-size: 9px; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase; }
+    .cat-btn .chev { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); opacity: 0.4; }
     .cat-btn .chev svg { width: 12px; height: 12px; stroke: #888; fill: none; stroke-width: 2; }
 
-    /* Quick controls */
     .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.2px;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.2px; color: var(--muted);
+      text-transform: uppercase; margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: space-between;
     }
     .section-label svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; }
-    .quick-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+
+    .quick-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
     .quick-btn {
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      cursor: pointer;
-      text-align: left;
+      background: var(--card2); border: 1px solid var(--border); border-radius: 14px;
+      padding: 12px 10px; display: flex; flex-direction: column; gap: 4px; cursor: pointer; text-align: left;
     }
     .quick-btn:active { background: #222; }
-    .quick-btn .q-top {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .quick-btn .q-top svg {
-      width: 16px;
-      height: 16px;
-      stroke: #aaa;
-      fill: none;
-      stroke-width: 1.7;
-    }
-    .quick-btn .q-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #ddd;
-      text-transform: uppercase;
-    }
-    .quick-btn .q-val {
-      font-size: 11px;
-      color: var(--muted);
-      padding-left: 22px;
-    }
-    .quick-btn .chev {
-      margin-left: auto;
-      opacity: 0.4;
-    }
+    .quick-btn .q-top { display: flex; align-items: center; gap: 6px; }
+    .quick-btn .q-top svg { width: 16px; height: 16px; stroke: #aaa; fill: none; stroke-width: 1.7; }
+    .quick-btn .q-label { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: #ddd; text-transform: uppercase; }
+    .quick-btn .q-val { font-size: 11px; color: var(--muted); padding-left: 22px; }
+    .quick-btn .chev { margin-left: auto; opacity: 0.4; }
     .quick-btn .chev svg { width: 12px; height: 12px; stroke: #888; fill: none; stroke-width: 2; }
 
-    /* Feed list (when category expanded) */
-    .feed-list {
-      display: none;
-      margin-bottom: 16px;
-    }
+    .feed-list { display: none; margin-bottom: 16px; }
     .feed-list.visible { display: block; }
     .feed-item {
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: border-color 0.15s;
+      background: var(--card2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center;
+      justify-content: space-between; cursor: pointer;
     }
-    .feed-item:active, .feed-item.active {
-      border-color: var(--blue);
-    }
-    .feed-item .fi-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .feed-item .fi-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: #eee;
-    }
-    .feed-item .fi-desc {
-      font-size: 11px;
-      color: var(--muted);
-    }
+    .feed-item:active, .feed-item.active { border-color: var(--blue); }
+    .feed-item .fi-left { display: flex; flex-direction: column; gap: 2px; }
+    .feed-item .fi-name { font-size: 13px; font-weight: 600; color: #eee; }
+    .feed-item .fi-desc { font-size: 11px; color: var(--muted); }
     .feed-item .fi-status {
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--green);
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      font-size: 10px; font-weight: 600; color: var(--green);
+      display: flex; align-items: center; gap: 5px;
     }
-    .feed-item .fi-status .s-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--green);
-      border-radius: 50%;
-    }
+    .feed-item .fi-status .s-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
     .feed-item.offline .fi-status { color: var(--dim); }
     .feed-item.offline .fi-status .s-dot { background: var(--dim); }
 
-    /* Bottom nav */
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
-      background: rgba(12,12,12,0.96);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid #1e1e1e;
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-      z-index: 100;
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
+      background: rgba(12,12,12,0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid #1e1e1e; display: flex; justify-content: space-around;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom)); z-index: 100;
     }
     .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      padding: 4px 12px;
-      min-width: 64px;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      padding: 4px 12px; min-width: 64px;
     }
-    .nav-item svg {
-      width: 22px;
-      height: 22px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 1.7;
-    }
-    .nav-item span {
-      font-size: 10px;
-      font-weight: 500;
-    }
-    .nav-item.active {
-      color: var(--blue);
-    }
+    .nav-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+    .nav-item span { font-size: 10px; font-weight: 500; }
+    .nav-item.active { color: var(--blue); }
     .nav-item.active svg { stroke: var(--blue); }
 
-    /* Views */
     .view { display: none; }
     .view.active { display: block; }
-
-    /* Favorites / Map / More simple views */
-    .simple-view {
-      padding: 20px 4px;
-      text-align: center;
-      color: var(--muted);
-    }
-    .simple-view h2 {
-      font-size: 18px;
-      color: #eee;
-      margin-bottom: 8px;
-    }
+    .simple-view { padding: 20px 4px; text-align: center; color: var(--muted); }
+    .simple-view h2 { font-size: 18px; color: #eee; margin-bottom: 8px; }
     .simple-view p { font-size: 13px; line-height: 1.5; }
 
-    /* Full map view */
     #full-map {
-      height: calc(100vh - 160px);
-      height: calc(100dvh - 160px);
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border);
+      height: calc(100vh - 160px); height: calc(100dvh - 160px);
+      border-radius: 16px; overflow: hidden; border: 1px solid var(--border);
     }
 
-    /* Toast */
     .toast {
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e1e1e;
-      border: 1px solid #333;
-      color: #eee;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-size: 13px;
-      z-index: 200;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s;
-      white-space: nowrap;
+      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+      background: #1e1e1e; border: 1px solid #333; color: #eee;
+      padding: 10px 18px; border-radius: 10px; font-size: 13px; z-index: 200;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s; white-space: nowrap;
     }
     .toast.show { opacity: 1; }
-
-    /* Now playing bar */
-    .now-playing {
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 6px;
-      min-height: 18px;
-    }
-    .now-playing strong { color: #ccc; font-weight: 600; }
   </style>
 </head>
 <body>
-  <!-- Status bar visual -->
   <div class="status-bar">
     <span id="clock">9:41</span>
     <div class="right">
@@ -660,7 +315,6 @@
     </div>
   </div>
 
-  <!-- App header -->
   <div class="app-header">
     <div class="brand">
       <div class="brand-icon">
@@ -690,9 +344,8 @@
   </div>
 
   <div class="main-scroll">
-    <!-- SCANNER VIEW -->
     <div id="view-scanner" class="view active">
-      <!-- Map -->
+      <!-- MAP -->
       <div class="map-card">
         <div class="map-header">
           <div class="map-loc">
@@ -709,7 +362,7 @@
         <div id="map"></div>
       </div>
 
-      <!-- Live Feed Player -->
+      <!-- PLAYER -->
       <div class="player-card">
         <div class="player-top">
           <div class="player-label">
@@ -725,24 +378,24 @@
 
         <div class="transport">
           <button class="t-btn" id="skip-back" aria-label="Back 10s">
-            <svg viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/><text x="8" y="15" font-size="7" fill="currentColor" stroke="none" font-weight="700">10</text></svg>
+            <svg viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
           </button>
-          <button class="t-btn play" id="play-btn" aria-label="Play / Pause">
+          <button class="t-btn play" id="play-btn" aria-label="Play">
             <svg id="icon-play" viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
             <svg id="icon-pause" viewBox="0 0 24 24" style="display:none"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
           </button>
           <button class="t-btn" id="skip-fwd" aria-label="Forward 10s">
-            <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/><text x="9" y="15" font-size="7" fill="currentColor" stroke="none" font-weight="700">10</text></svg>
+            <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>
           </button>
         </div>
 
         <div class="progress-row">
           <span id="time-cur">00:00</span>
-          <div class="progress-track" id="progress-track">
+          <div class="progress-track">
             <div class="progress-fill" id="progress-fill"></div>
             <div class="progress-thumb" id="progress-thumb"></div>
           </div>
-          <span id="time-dur">LIVE</span>
+          <span>LIVE</span>
         </div>
 
         <div class="vol-row">
@@ -754,65 +407,60 @@
           <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
         </div>
 
-        <div class="now-playing" id="now-playing">Select a channel to listen</div>
+        <div class="now-playing" id="now-playing">Select a channel below</div>
+
+        <!-- Official Broadcastify player (free audio) -->
+        <div class="bcfy-wrap" id="bcfy-wrap">
+          <iframe id="bcfy-player" src="about:blank" allow="autoplay; fullscreen" allowfullscreen title="Live scanner audio"></iframe>
+        </div>
+        <a class="listen-btn" id="listen-btn" href="https://www.broadcastify.com/listen/feed/14527" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          LISTEN LIVE — TAP TO HEAR
+        </a>
       </div>
 
-      <!-- Categories -->
+      <!-- CATEGORIES -->
       <div class="cat-grid" id="cat-grid">
         <button class="cat-btn active" data-cat="dispatch">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
-          </div>
+          <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg></div>
           <span class="label">DISPATCH</span>
           <span class="sublabel">Primary</span>
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
         <button class="cat-btn" data-cat="police">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
+          <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
           <span class="label">POLICE</span>
           <span class="sublabel">Law Enforcement</span>
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
         <button class="cat-btn" data-cat="fire">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M12 2c0 0-5 5-5 10a5 5 0 0 0 10 0c0-5-5-10-5-10z"/><path d="M12 12v6"/></svg>
-          </div>
+          <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2c0 0-5 5-5 10a5 5 0 0 0 10 0c0-5-5-10-5-10z"/><path d="M12 12v6"/></svg></div>
           <span class="label">FIRE / EMS</span>
           <span class="sublabel">Fire & Rescue</span>
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
         <button class="cat-btn" data-cat="traffic">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-          </div>
+          <div class="icon-wrap"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
           <span class="label">TRAFFIC</span>
           <span class="sublabel">Road Conditions</span>
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
         <button class="cat-btn" data-cat="metro">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          </div>
+          <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
           <span class="label">METRO</span>
           <span class="sublabel">Other Agencies</span>
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
         <button class="cat-btn" data-cat="favorites">
-          <div class="icon-wrap">
-            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
+          <div class="icon-wrap"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
           <span class="label">FAVORITES</span>
           <span class="sublabel">Custom Channels</span>
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
       </div>
 
-      <!-- Dynamic feed list for selected category -->
       <div class="feed-list" id="feed-list"></div>
 
-      <!-- Quick Controls -->
       <div class="section-label">
         <span>QUICK CONTROLS</span>
         <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
@@ -845,34 +493,32 @@
       </div>
     </div>
 
-    <!-- FAVORITES VIEW -->
     <div id="view-favorites" class="view">
       <div class="simple-view">
         <h2>Favorites</h2>
-        <p>Tap the star on any feed in Scanner to add it here. Your custom channels will appear in this list.</p>
+        <p>Select channels from Scanner. Favorites are stored on this device.</p>
         <div id="fav-list" style="margin-top:20px;text-align:left"></div>
       </div>
     </div>
 
-    <!-- MAP VIEW -->
     <div id="view-map" class="view">
       <div id="full-map"></div>
-      <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:10px">Active feed location highlighted</p>
+      <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:10px">Active feed location</p>
     </div>
 
-    <!-- MORE VIEW -->
     <div id="view-more" class="view">
       <div class="simple-view">
         <h2>About</h2>
-        <p style="margin-bottom:16px">Free live scanner for Cincinnati, Hamilton County & Delhi Township only. Feeds powered by Broadcastify public streams.</p>
-        <p style="margin-bottom:8px"><strong style="color:#ccc">Coverage</strong></p>
-        <p style="margin-bottom:16px;font-size:12px;line-height:1.6">Hamilton County Police / Fire / EMS (includes Delhi Township PD & FD), Cincinnati Fire & EMS, area law dispatch on Ohio MARCS-IP.</p>
-        <p style="font-size:11px;opacity:0.7">For educational & hobby listening only. Do not interfere with emergency communications. Some channels may be encrypted or offline.</p>
+        <p style="margin-bottom:16px">Free live scanner for Cincinnati, Hamilton County &amp; Delhi Township only.</p>
+        <p style="margin-bottom:8px"><strong style="color:#ccc">How to listen</strong></p>
+        <p style="margin-bottom:16px;font-size:12px;line-height:1.6">Tap a channel, then use the player box or the blue <strong>LISTEN LIVE</strong> button. Audio is provided free by Broadcastify (a short ad may play first).</p>
+        <p style="margin-bottom:8px"><strong style="color:#ccc">Delhi Township</strong></p>
+        <p style="margin-bottom:16px;font-size:12px;line-height:1.6">Delhi PD (TG 21203) and Delhi Fire (TG 21204) are on the Hamilton County feed. Select <strong>Delhi Township</strong> under Police or Dispatch — map centers on Delhi and the same live stream plays.</p>
+        <p style="font-size:11px;opacity:0.7">Educational / hobby use only. Do not interfere with emergency communications.</p>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-view="scanner">
       <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
@@ -894,127 +540,164 @@
 
   <div class="toast" id="toast"></div>
 
-  <!-- Audio host (embeds Broadcastify web players) -->
-  <div class="audio-host" id="audio-host"></div>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
-    // ========== FREE CINCINNATI / HAMILTON / DELHI FEEDS ONLY ==========
+    // Free Cincinnati / Hamilton / Delhi feeds only
     const FEEDS = {
       dispatch: [
         {
+          key: 'hc-dispatch',
           id: '14527',
           name: 'Hamilton County Dispatch',
-          desc: 'Police, Fire & EMS + firegrounds (includes Delhi Twp)',
-          lat: 39.1031,
-          lon: -84.5120,
+          desc: 'Police, Fire & EMS + firegrounds (includes Delhi)',
+          lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
           status: 'online',
-          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
+        },
+        {
+          key: 'delhi-dispatch',
+          id: '14527',
+          name: 'Delhi Township',
+          desc: 'Delhi PD (TG 21203) & Fire (TG 21204) via county feed',
+          lat: 39.0923, lon: -84.6233,
+          label: 'DELHI TOWNSHIP, OH',
+          coords: '39.0923° N  84.6233° W',
+          status: 'online',
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
         }
       ],
       police: [
         {
+          key: 'delhi-pd',
+          id: '14527',
+          name: 'Delhi Township PD',
+          desc: 'Delhi Police — TG 21203 / 31 DLHI PD (on Hamilton feed)',
+          lat: 39.0923, lon: -84.6233,
+          label: 'DELHI TOWNSHIP, OH',
+          coords: '39.0923° N  84.6233° W',
+          status: 'online',
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
+        },
+        {
+          key: 'hc-law',
           id: '14527',
           name: 'Hamilton County Law',
-          desc: 'County law East / West / Central (Delhi on West)',
-          lat: 39.1031,
-          lon: -84.5120,
+          desc: 'East / West / Central (Delhi on West)',
+          lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
           status: 'online',
-          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
         },
         {
+          key: 'cpd',
           id: '32619',
           name: 'Cincinnati Police',
-          desc: 'CPD Districts 1–4 (feed currently offline)',
-          lat: 39.1031,
-          lon: -84.5120,
+          desc: 'CPD Districts (feed currently offline on Broadcastify)',
+          lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
           status: 'offline',
-          player: 'https://www.broadcastify.com/webPlayer/32619?bc=0'
+          listen: 'https://www.broadcastify.com/listen/feed/32619',
+          player: 'https://www.broadcastify.com/webPlayer/32619'
         }
       ],
       fire: [
         {
+          key: 'cfd',
           id: '5184',
           name: 'Cincinnati Fire & EMS',
           desc: 'City CFD Zone A EMS + Fire Zones B–J',
-          lat: 39.1031,
-          lon: -84.5120,
+          lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
           status: 'online',
-          player: 'https://www.broadcastify.com/webPlayer/5184?bc=0'
+          listen: 'https://www.broadcastify.com/listen/feed/5184',
+          player: 'https://www.broadcastify.com/webPlayer/5184'
         },
         {
+          key: 'delhi-fd',
+          id: '14527',
+          name: 'Delhi Township Fire',
+          desc: 'Delhi FD TG 21204 via Hamilton County feed',
+          lat: 39.0923, lon: -84.6233,
+          label: 'DELHI TOWNSHIP, OH',
+          coords: '39.0923° N  84.6233° W',
+          status: 'online',
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
+        },
+        {
+          key: 'hc-fire',
           id: '14527',
           name: 'Hamilton County Fire / EMS',
           desc: 'County fire East / West / Valley + firegrounds',
-          lat: 39.1031,
-          lon: -84.5120,
+          lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
           status: 'online',
-          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
         }
       ],
       traffic: [
         {
+          key: 'hc-traffic',
           id: '14527',
           name: 'Area Road / Incident Traffic',
-          desc: 'Covered via primary Hamilton County dispatch',
-          lat: 39.1031,
-          lon: -84.5120,
+          desc: 'Via primary Hamilton County dispatch',
+          lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
           status: 'online',
-          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
         }
       ],
       metro: [
         {
+          key: 'hc-metro',
           id: '14527',
           name: 'Hamilton County Metro Agencies',
-          desc: 'Norwood, Colerain, Green Twp, UC area via county feed',
-          lat: 39.1031,
-          lon: -84.5120,
+          desc: 'Norwood, Colerain, Green Twp & area via county feed',
+          lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
           status: 'online',
-          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
         }
       ],
       favorites: []
     };
 
-    // State
     let currentCat = 'dispatch';
     let currentFeed = FEEDS.dispatch[0];
     let isPlaying = false;
     let favorites = JSON.parse(localStorage.getItem('cps_favs') || '[]');
     let alertsOn = true;
-    let map, fullMap, marker, fullMarker;
+    let map, fullMap, marker, fullMarker, areaCircle;
     let waveTimer = null;
     let playStart = 0;
+    let progressInterval = null;
 
-    // Clock
     function updateClock() {
       const now = new Date();
-      const h = now.getHours();
-      const m = String(now.getMinutes()).padStart(2, '0');
-      document.getElementById('clock').textContent = `${h}:${m}`;
+      document.getElementById('clock').textContent =
+        now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
     }
     updateClock();
-    setInterval(updateClock, 30000);
+    setInterval(updateClock, 20000);
 
-    // Waveform bars
+    // Waveform
     const waveform = document.getElementById('waveform');
-    const BAR_COUNT = 48;
-    for (let i = 0; i < BAR_COUNT; i++) {
+    for (let i = 0; i < 48; i++) {
       const bar = document.createElement('div');
       bar.className = 'wave-bar inactive';
       bar.style.height = '8px';
@@ -1022,81 +705,71 @@
     }
     const bars = waveform.querySelectorAll('.wave-bar');
 
-    function animateWave(active) {
+    function animateWave(on) {
       if (waveTimer) clearInterval(waveTimer);
-      if (!active) {
-        bars.forEach(b => {
-          b.classList.add('inactive');
-          b.style.height = '8px';
-        });
+      if (!on) {
+        bars.forEach(b => { b.classList.add('inactive'); b.style.height = '8px'; });
         return;
       }
       waveTimer = setInterval(() => {
         bars.forEach((b, i) => {
           b.classList.remove('inactive');
-          const h = 6 + Math.random() * 42 + Math.sin(Date.now() / 200 + i * 0.4) * 8;
-          b.style.height = Math.max(6, Math.min(50, h)) + 'px';
+          const h = 6 + Math.random() * 40 + Math.sin(Date.now() / 180 + i * 0.35) * 10;
+          b.style.height = Math.max(6, Math.min(46, h)) + 'px';
         });
-      }, 120);
+      }, 110);
     }
 
-    // Map init
     function initMaps() {
-      const darkTiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-      map = L.map('map', { zoomControl: false, attributionControl: false }).setView([39.1031, -84.5120], 11);
-      L.tileLayer(darkTiles, { maxZoom: 18 }).addTo(map);
+      const tiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+      const opts = { zoomControl: false, attributionControl: false };
+
+      map = L.map('map', opts).setView([39.1031, -84.5120], 11);
+      L.tileLayer(tiles, { maxZoom: 19, subdomains: 'abcd' }).addTo(map);
       marker = L.circleMarker([39.1031, -84.5120], {
-        radius: 10,
-        color: '#3b82f6',
-        fillColor: '#3b82f6',
-        fillOpacity: 0.7,
-        weight: 2
+        radius: 11, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.85, weight: 2
       }).addTo(map);
-      L.circle([39.1031, -84.5120], {
-        radius: 4000,
-        color: '#3b82f6',
-        fillColor: '#3b82f6',
-        fillOpacity: 0.08,
-        weight: 1
+      areaCircle = L.circle([39.1031, -84.5120], {
+        radius: 3500, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 1
       }).addTo(map);
 
       fullMap = L.map('full-map', { zoomControl: true, attributionControl: false }).setView([39.1031, -84.5120], 12);
-      L.tileLayer(darkTiles, { maxZoom: 18 }).addTo(fullMap);
+      L.tileLayer(tiles, { maxZoom: 19, subdomains: 'abcd' }).addTo(fullMap);
       fullMarker = L.circleMarker([39.1031, -84.5120], {
-        radius: 12,
-        color: '#3b82f6',
-        fillColor: '#3b82f6',
-        fillOpacity: 0.8,
-        weight: 2
+        radius: 13, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.9, weight: 2
       }).addTo(fullMap);
+
+      // Force correct size after layout
+      setTimeout(() => { map.invalidateSize(); }, 150);
+      setTimeout(() => { map.invalidateSize(); }, 500);
     }
 
     function updateMapForFeed(feed) {
-      if (!feed) return;
+      if (!feed || !map) return;
       document.getElementById('map-city').textContent = feed.label;
       document.getElementById('map-coords').textContent = feed.coords;
       document.getElementById('qc-loc-val').textContent = feed.label.split(',')[0];
-      if (marker) {
-        marker.setLatLng([feed.lat, feed.lon]);
-        map.setView([feed.lat, feed.lon], 11);
-      }
+      const ll = [feed.lat, feed.lon];
+      marker.setLatLng(ll);
+      areaCircle.setLatLng(ll);
+      map.setView(ll, feed.key && feed.key.indexOf('delhi') >= 0 ? 12 : 11);
       if (fullMarker) {
-        fullMarker.setLatLng([feed.lat, feed.lon]);
-        fullMap.setView([feed.lat, feed.lon], 12);
+        fullMarker.setLatLng(ll);
+        fullMap.setView(ll, 12);
       }
+      setTimeout(() => map.invalidateSize(), 50);
     }
 
-    // Render feed list for category
     function renderFeeds(cat) {
       const list = document.getElementById('feed-list');
       const items = FEEDS[cat] || [];
       if (!items.length) {
-        list.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:8px 0">No channels in this category yet.</p>';
+        list.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:8px 0">No channels in this category.</p>';
         list.classList.add('visible');
         return;
       }
       list.innerHTML = items.map(f => `
-        <div class="feed-item ${f.status === 'offline' ? 'offline' : ''} ${currentFeed && currentFeed.id === f.id && currentFeed.name === f.name ? 'active' : ''}" data-id="${f.id}" data-name="${f.name}">
+        <div class="feed-item ${f.status === 'offline' ? 'offline' : ''} ${currentFeed && currentFeed.key === f.key ? 'active' : ''}" data-key="${f.key}">
           <div class="fi-left">
             <span class="fi-name">${f.name}</span>
             <span class="fi-desc">${f.desc}</span>
@@ -1107,7 +780,7 @@
       list.classList.add('visible');
       list.querySelectorAll('.feed-item').forEach(el => {
         el.addEventListener('click', () => {
-          const feed = items.find(x => x.id === el.dataset.id && x.name === el.dataset.name);
+          const feed = items.find(x => x.key === el.dataset.key);
           if (feed) selectFeed(feed);
         });
       });
@@ -1116,39 +789,30 @@
     function selectFeed(feed) {
       currentFeed = feed;
       updateMapForFeed(feed);
-      document.getElementById('now-playing').innerHTML = `<strong>${feed.name}</strong>`;
-      // Update active states
+      document.getElementById('now-playing').innerHTML = '<strong>' + feed.name + '</strong>';
+      document.getElementById('listen-btn').href = feed.listen;
+
+      // Load official Broadcastify player so audio can be heard
+      const iframe = document.getElementById('bcfy-player');
+      iframe.src = feed.player + '?bc=0';
+
       document.querySelectorAll('.feed-item').forEach(el => {
-        el.classList.toggle('active', el.dataset.id === feed.id && el.dataset.name === feed.name);
+        el.classList.toggle('active', el.dataset.key === feed.key);
       });
-      // Load player
-      loadPlayer(feed);
+
       if (feed.status === 'online') {
         isPlaying = true;
         setPlayUI(true);
         animateWave(true);
         playStart = Date.now();
         startProgress();
+        showToast('Player loaded — tap play in the box or LISTEN LIVE');
       } else {
         isPlaying = false;
         setPlayUI(false);
         animateWave(false);
-        showToast('This feed is currently offline');
+        showToast('This feed is offline');
       }
-    }
-
-    function loadPlayer(feed) {
-      const host = document.getElementById('audio-host');
-      host.innerHTML = '';
-      // Open Broadcastify player in a controlled way: embed + also provide direct listen path
-      const iframe = document.createElement('iframe');
-      iframe.className = 'embed-frame';
-      iframe.src = feed.player;
-      iframe.allow = 'autoplay; fullscreen';
-      iframe.setAttribute('allowfullscreen', '');
-      host.appendChild(iframe);
-      // For free users the most reliable path is the official player page
-      // We keep the embed for presence and open full player on demand
     }
 
     function setPlayUI(playing) {
@@ -1156,7 +820,6 @@
       document.getElementById('icon-pause').style.display = playing ? 'block' : 'none';
     }
 
-    let progressInterval = null;
     function startProgress() {
       if (progressInterval) clearInterval(progressInterval);
       progressInterval = setInterval(() => {
@@ -1164,15 +827,14 @@
         const sec = Math.floor((Date.now() - playStart) / 1000);
         const m = String(Math.floor(sec / 60)).padStart(2, '0');
         const s = String(sec % 60).padStart(2, '0');
-        document.getElementById('time-cur').textContent = `${m}:${s}`;
-        // Live streams have no fixed duration — keep a moving fill for visual feedback
-        const pct = Math.min(95, 15 + (sec % 80));
+        document.getElementById('time-cur').textContent = m + ':' + s;
+        const pct = Math.min(92, 10 + (sec % 70));
         document.getElementById('progress-fill').style.width = pct + '%';
         document.getElementById('progress-thumb').style.left = pct + '%';
       }, 1000);
     }
 
-    // Category clicks
+    // Categories
     document.querySelectorAll('.cat-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -1184,7 +846,7 @@
       });
     });
 
-    // Play / Pause
+    // Play button → open official free player (guaranteed audio)
     document.getElementById('play-btn').addEventListener('click', () => {
       if (!currentFeed) return;
       if (currentFeed.status === 'offline') {
@@ -1197,27 +859,21 @@
       if (isPlaying) {
         playStart = Date.now();
         startProgress();
-        // Open full Broadcastify player so user gets live audio (free tier)
-        window.open(currentFeed.player.replace('webPlayer', 'listen/feed').replace('?bc=0', ''), '_blank');
-        showToast('Opening live player…');
-      } else {
-        if (progressInterval) clearInterval(progressInterval);
+        window.open(currentFeed.listen, '_blank', 'noopener');
+        showToast('Opening live audio…');
+      } else if (progressInterval) {
+        clearInterval(progressInterval);
       }
     });
 
-    document.getElementById('skip-back').addEventListener('click', () => showToast('Live stream — skip not available'));
-    document.getElementById('skip-fwd').addEventListener('click', () => showToast('Live stream — skip not available'));
+    document.getElementById('skip-back').addEventListener('click', () => showToast('Live stream — seek not available'));
+    document.getElementById('skip-fwd').addEventListener('click', () => showToast('Live stream — seek not available'));
 
-    // Volume visual (non-functional on external player, visual only)
-    let vol = 70;
-    function setVolUI(v) {
-      vol = Math.max(0, Math.min(100, v));
-      document.getElementById('vol-fill').style.width = vol + '%';
-      document.getElementById('vol-thumb').style.left = vol + '%';
-    }
     document.getElementById('vol-track').addEventListener('click', e => {
       const rect = e.currentTarget.getBoundingClientRect();
-      setVolUI(((e.clientX - rect.left) / rect.width) * 100);
+      const v = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+      document.getElementById('vol-fill').style.width = v + '%';
+      document.getElementById('vol-thumb').style.left = v + '%';
     });
 
     // Nav
@@ -1228,9 +884,8 @@
         const v = item.dataset.view;
         document.querySelectorAll('.view').forEach(vw => vw.classList.remove('active'));
         document.getElementById('view-' + v).classList.add('active');
-        if (v === 'map' && fullMap) {
-          setTimeout(() => fullMap.invalidateSize(), 100);
-        }
+        if (v === 'map' && fullMap) setTimeout(() => fullMap.invalidateSize(), 120);
+        if (v === 'scanner' && map) setTimeout(() => map.invalidateSize(), 120);
         if (v === 'favorites') renderFavorites();
       });
     });
@@ -1241,34 +896,29 @@
         el.innerHTML = '<p style="color:var(--muted);font-size:13px">No favorites yet.</p>';
         return;
       }
-      el.innerHTML = favorites.map(f => `
-        <div class="feed-item" style="margin-bottom:8px">
-          <div class="fi-left">
-            <span class="fi-name">${f.name}</span>
-            <span class="fi-desc">${f.desc || ''}</span>
-          </div>
-        </div>
-      `).join('');
+      el.innerHTML = favorites.map(f =>
+        '<div class="feed-item" style="margin-bottom:8px"><div class="fi-left"><span class="fi-name">' +
+        f.name + '</span><span class="fi-desc">' + (f.desc || '') + '</span></div></div>'
+      ).join('');
     }
 
-    // Quick controls
     document.getElementById('qc-alerts').addEventListener('click', () => {
       alertsOn = !alertsOn;
       document.getElementById('qc-alerts-val').textContent = alertsOn ? 'On' : 'Off';
-      showToast('Alerts ' + (alertsOn ? 'enabled' : 'disabled'));
+      showToast('Alerts ' + (alertsOn ? 'on' : 'off'));
     });
     document.getElementById('qc-location').addEventListener('click', () => {
-      showToast('Location locked to Cincinnati / Hamilton County');
+      showToast('Locked to Cincinnati / Hamilton / Delhi');
     });
     document.getElementById('qc-dark').addEventListener('click', () => {
-      showToast('Dark mode is always on for this scanner');
+      showToast('Dark mode is always on');
     });
     document.getElementById('map-expand').addEventListener('click', () => {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelector('.nav-item[data-view="map"]').classList.add('active');
       document.querySelectorAll('.view').forEach(vw => vw.classList.remove('active'));
       document.getElementById('view-map').classList.add('active');
-      setTimeout(() => fullMap && fullMap.invalidateSize(), 100);
+      setTimeout(() => fullMap && fullMap.invalidateSize(), 120);
     });
     document.getElementById('settings-btn').addEventListener('click', () => {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -1281,16 +931,19 @@
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2200);
+      setTimeout(() => t.classList.remove('show'), 2500);
     }
 
-    // Boot
     window.addEventListener('load', () => {
       initMaps();
       renderFeeds('dispatch');
       selectFeed(FEEDS.dispatch[0]);
-      // Pre-warm map size
-      setTimeout(() => { if (map) map.invalidateSize(); }, 200);
+    });
+
+    // Keep map sized on orientation / resize
+    window.addEventListener('resize', () => {
+      if (map) map.invalidateSize();
+      if (fullMap) fullMap.invalidateSize();
     });
   </script>
 </body>
