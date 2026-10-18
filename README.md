@@ -6,44 +6,44 @@ Exact dark-theme live scanner for **Cincinnati, Hamilton County, and Delhi Towns
 
 **[https://joeyfrogge-jpg.github.io/cincinnati-police-scanner/](https://joeyfrogge-jpg.github.io/cincinnati-police-scanner/)**
 
-(If the link 404s: Repo → Settings → Pages → Deploy from branch `main` / root → Save.)
+(If 404: Settings → Pages → Deploy from branch `main` / root → Save.)
 
-## How to hear live audio
+## Categories
 
-Broadcastify no longer allows third-party audio embeds. Free listening works like this:
+| Category | Channels |
+|----------|----------|
+| **DISPATCH** | Hamilton County primary |
+| **POLICE** | Hamilton County Law, Cincinnati PD |
+| **FIRE / EMS** | Cincinnati Fire, Hamilton County Fire |
+| **DELHI** | Delhi Township (All), Delhi PD, Delhi Fire, West Law |
+| **TRAFFIC** | Area road / incident traffic |
+| **FAVORITES** | Your saved channels |
 
-1. Select a channel (Dispatch, Police, Fire/EMS, or **Delhi Township**).
-2. The official Broadcastify player loads in the player card.
-3. Tap **LISTEN LIVE — TAP TO HEAR** (or the circular play button) to open the free live stream.
-4. A short ad may play first on free feeds; then live radio starts.
+## Delhi Township (own category)
 
-## Delhi Township
+Tap **DELHI** in the grid. Channels:
 
-Delhi is fully covered on the free **Hamilton County** feed (Broadcastify ID **14527**):
+- **Delhi Township (All)** — PD + Fire
+- **Delhi Township PD** — TG 21203 / 31 DLHI PD
+- **Delhi Township Fire** — TG 21204 / 31 DLHI FD
+- **West Law (covers Delhi)** — 31 LE WEST
 
-| Channel | Talkgroup | How to select in app |
-|---------|-----------|----------------------|
-| Delhi PD | 21203 (31 DLHI PD) | **Police → Delhi Township PD** or **Dispatch → Delhi Township** |
-| Delhi Fire | 21204 | **Fire / EMS → Delhi Township Fire** |
+There is no separate free Delhi-only stream. Delhi traffic is carried on the free **Hamilton County** Broadcastify feed (ID 14527). Selecting any Delhi channel centers the map on Delhi Township and loads that live stream.
 
-Selecting any Delhi channel centers the map on Delhi Township (39.0923° N, 84.6233° W) and loads the same live Hamilton County stream that carries those talkgroups.
+## How to hear audio
 
-## Free feeds used (Cincinnati area only)
+1. Select a category and channel.
+2. Tap **LISTEN LIVE — TAP TO HEAR** (or the play button).
+3. Official free Broadcastify player opens (short ad may play first).
+
+## Free feeds
 
 | Feed | ID | Status |
 |------|-----|--------|
-| Hamilton County Police, Fire & EMS Dispatch | 14527 | Online — primary (includes Delhi) |
+| Hamilton County Police, Fire & EMS | 14527 | Online (includes Delhi) |
 | Cincinnati Fire | 5184 | Online |
-| Cincinnati Police | 32619 | Offline on Broadcastify |
-
-## Features
-
-- Design matched to the provided screenshot (SVG icons only, no emojis)
-- Working dark map (Leaflet + Carto dark tiles) that moves with the selected feed
-- Categories: Dispatch, Police, Fire/EMS, Traffic, Metro, Favorites
-- Explicit Delhi Township entries under Dispatch, Police, and Fire/EMS
-- Standalone single-file app for GitHub Pages
+| Cincinnati Police | 32619 | Offline |
 
 ## Disclaimer
 
-Educational and hobby listening only. Do not interfere with emergency communications. Feeds may go offline or become encrypted without notice.
+Educational / hobby listening only. Do not interfere with emergency communications.
