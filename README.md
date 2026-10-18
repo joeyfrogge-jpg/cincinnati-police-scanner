@@ -1,75 +1,51 @@
-# Cincinnati Police Scanner App
+# Cincinnati Police Scanner
 
-**Live police, fire, and EMS scanner for the Cincinnati, Ohio area** — strictly Hamilton County with full **Delhi Township** coverage.
+Exact dark-theme live scanner UI for **Cincinnati, Hamilton County, and Delhi Township, Ohio** only.
 
-## 🎧 Live Web App
+## Live App
 
-Open the app right here in your browser:
+**[Open Scanner](https://joeyfrogge-jpg.github.io/cincinnati-police-scanner/)**
 
-### → [Open Scanner App](https://joeyfrogge-jpg.github.io/cincinnati-police-scanner/)
+(Enable GitHub Pages: Settings → Pages → Deploy from branch `main` / root.)
 
-(Once GitHub Pages is enabled — see instructions below)
+## Features
 
-Or open `index.html` locally / view the source on the `main` branch.
+- Pixel-matched dark UI from the provided design (no emojis — SVG icons only)
+- Live free Broadcastify feeds restricted to Cincinnati / Hamilton County / Delhi Township
+- Categories: Dispatch (Primary), Police (Law Enforcement), Fire / EMS, Traffic, Metro, Favorites
+- Interactive dark map that updates to the selected feed location
+- Live waveform, transport controls, volume UI, bottom navigation
+- Standalone single-file app (HTML + CSS + JS) — works offline for UI, live audio requires network
 
-The app features:
-- Full-size embedded live players for the main feeds
-- Tabbed interface (Hamilton County / Cincinnati Fire / Cincinnati Police / Talkgroups)
-- One-click **Open Full Player** and **Pop-out** buttons for the most reliable listening experience
-- Delhi Township clearly highlighted
-- Mobile-friendly design
+## Free Live Feeds Used
 
-### Best Way to Listen (Recommended)
+| Category | Feed | Broadcastify ID | Notes |
+|----------|------|-----------------|-------|
+| Dispatch / Police / Traffic / Metro | Hamilton County Police, Fire & EMS Dispatch | 14527 | Primary. Includes Delhi Township PD/FD, Norwood, county law East/West/Central, firegrounds |
+| Fire / EMS | Cincinnati Fire | 5184 | City CFD Zone A EMS + Fire Zones B–J |
+| Police (secondary) | Cincinnati Police | 32619 | Currently offline / deleted on Broadcastify |
 
-Broadcastify embeds can sometimes be limited by browser autoplay policies or ads. For the **most reliable full listening experience**:
+All feeds are free public streams. The dedicated Cincinnati Police feed has been offline for an extended period; law traffic for the city and Delhi is carried on the Hamilton County primary feed (Ohio MARCS-IP).
 
-1. Click **Open Full Player** on any feed inside the app, **or**
-2. Use these direct links:
+## Delhi Township
 
-| Feed | Direct Full Player |
-|------|--------------------|
-| **Hamilton County** (includes Delhi) | [https://www.broadcastify.com/listen/feed/14527](https://www.broadcastify.com/listen/feed/14527) |
-| **Cincinnati Fire** | [https://www.broadcastify.com/listen/feed/5184](https://www.broadcastify.com/listen/feed/5184) |
-| **Cincinnati Police** | [https://www.broadcastify.com/listen/feed/32619](https://www.broadcastify.com/listen/feed/32619) |
+Delhi is covered on the Hamilton County feed:
 
-These open Broadcastify’s official player where you can fully control volume, go fullscreen, and listen without embedding restrictions.
+- Delhi PD — TG 21203 (31 DLHI PD)
+- Delhi FD — TG 21204
+- Western Law Dispatch (31 LE WEST) covers the Delhi area
 
-## Enable GitHub Pages (so the app has a permanent URL)
+## Design Notes
 
-1. Go to the repository → **Settings** → **Pages**
-2. Under **Source**, select **Deploy from a branch**
-3. Choose branch `main` and folder `/ (root)`
-4. Click **Save**
-5. After a minute the app will be live at:
-   `https://joeyfrogge-jpg.github.io/cincinnati-police-scanner/`
-
-## Delhi Township Coverage
-
-Delhi is fully included on the Hamilton County MARCS-IP system.
-
-| DEC | Alpha Tag | Description |
-|-----|-----------|-------------|
-| **21203** | 31 DLHI PD | Delhi Police |
-| **21204** | 31 DLHI FD | Delhi Fire |
-| 21205 | 31 DLHI SVC | Delhi Service |
-
-- Unit IDs: **8D10–8D99**
-- Appears on the main **Hamilton County** feed (especially West Law Dispatch – 31 LE WEST)
-
-## Talkgroup Highlights
-
-**Cincinnati Police**  
-55649 DIST 1 · 55650 DIST 2 · 55651 DIST 3 · 55652 DIST 4 · 55653 DIST 5
-
-**Hamilton County Law**  
-21071 LE EAST · 21072 LE WEST (Delhi area) · 21073 LE CENT
-
-Full data: [RadioReference – Ohio MARCS-IP](https://www.radioreference.com/db/sid/6643)
+- Layout, colors, spacing, card style, category grid, quick controls, and bottom nav match the attached screenshot
+- Map uses CartoDB dark tiles + Leaflet
+- Waveform is animated when a live feed is selected
+- Play opens the official Broadcastify free player (most reliable free path; static MP3 streams require Broadcastify Premium)
 
 ## Disclaimer
 
-For educational and hobby listening only. Respect local laws. Do not interfere with emergency communications. Some channels may be encrypted or feeds may go offline without notice.
+For educational and hobby listening only. Do not interfere with emergency communications. Feeds may go offline or channels may become encrypted without notice.
 
 ---
 
-*Strictly Cincinnati / Hamilton County focused.*
+Strictly Cincinnati / Hamilton County / Delhi Township focused.

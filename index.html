@@ -2,415 +2,1295 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cincinnati Police Scanner App | Delhi Township Included</title>
-  <meta name="description" content="Live police, fire, and EMS scanner for Cincinnati, Hamilton County, and Delhi Township Ohio">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Cincinnati Police Scanner</title>
+  <meta name="description" content="Live free police, fire & EMS scanner for Cincinnati, Hamilton County and Delhi Township, Ohio">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     :root {
-      --bg: #0b1120;
-      --card: #1e293b;
-      --card-hover: #273549;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
+      --bg: #0a0a0a;
+      --card: #121212;
+      --card2: #1a1a1a;
+      --border: #222;
+      --blue: #3b82f6;
+      --blue-glow: #2563eb;
       --green: #22c55e;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --border: #334155;
+      --text: #e5e5e5;
+      --muted: #8a8a8a;
+      --dim: #555;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      height: 100%;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.5;
-      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    header {
-      background: linear-gradient(180deg, #1e293b 0%, var(--bg) 100%);
-      padding: 1.5rem 1rem 1rem;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(8px);
-    }
-    h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-top: 0.25rem;
-    }
-    .badge-row {
+    body {
       display: flex;
-      gap: 0.5rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 0.75rem;
+      flex-direction: column;
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      min-height: 100dvh;
+      position: relative;
+      background: #0a0a0a;
     }
-    .badge {
-      display: inline-flex;
+
+    /* Status bar mimic */
+    .status-bar {
+      height: 44px;
+      display: flex;
       align-items: center;
-      gap: 0.3rem;
-      background: #14532d;
-      color: #bbf7d0;
-      font-size: 0.75rem;
+      justify-content: space-between;
+      padding: 0 18px;
+      font-size: 14px;
       font-weight: 600;
-      padding: 0.25rem 0.7rem;
-      border-radius: 9999px;
+      color: #fff;
+      flex-shrink: 0;
     }
-    .badge.live {
-      background: #14532d;
+    .status-bar .right { display: flex; gap: 5px; align-items: center; }
+    .status-bar svg { width: 16px; height: 16px; fill: #fff; }
+
+    /* Header */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 16px 12px;
+      flex-shrink: 0;
     }
-    .badge.live::before {
-      content: '';
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-icon svg { width: 32px; height: 32px; }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+    .brand-text .title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #fff;
+    }
+    .brand-text .sub {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: var(--green);
+    }
+    .live-dot {
       width: 7px;
       height: 7px;
       background: var(--green);
       border-radius: 50%;
-      animation: pulse 1.5s infinite;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 1.6s infinite;
     }
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
     }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.25rem;
-    }
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1.25rem;
-      overflow-x: auto;
-      padding-bottom: 0.25rem;
-    }
-    .tab {
-      flex-shrink: 0;
-      background: var(--card);
-      border: 1px solid var(--border);
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
       color: var(--muted);
-      padding: 0.6rem 1.1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: all 0.15s;
     }
-    .tab:hover { background: var(--card-hover); color: var(--text); }
-    .tab.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: white;
+    .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .icon-btn:active { opacity: 0.7; }
+
+    /* Scrollable main */
+    .main-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0 14px 100px;
+      -webkit-overflow-scrolling: touch;
     }
-    .panel { display: none; }
-    .panel.active { display: block; }
-    /* Player Card */
+
+    /* Map card */
+    .map-card {
+      background: var(--card);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .map-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(10,10,10,0.85) 0%, transparent 100%);
+    }
+    .map-loc {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .map-loc svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 1.6; }
+    .map-loc-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .map-loc-text .city {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.3px;
+    }
+    .map-loc-text .coords {
+      font-size: 11px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .map-action {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(30,30,30,0.9);
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #ccc;
+    }
+    .map-action svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    #map {
+      height: 160px;
+      width: 100%;
+      background: #111;
+    }
+    .leaflet-control-attribution { display: none !important; }
+    .leaflet-control-zoom { display: none !important; }
+
+    /* Live Feed player card */
     .player-card {
       background: var(--card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .player-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .player-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--blue);
+    }
+    .player-label .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--blue);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--blue);
+      animation: pulse 1.6s infinite;
+    }
+    .signal-icon svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.6; }
+
+    /* Waveform */
+    .waveform {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .wave-bar {
+      width: 3px;
+      background: var(--blue);
+      border-radius: 2px;
+      transition: height 0.15s ease;
+      opacity: 0.85;
+    }
+    .wave-bar.inactive { background: #2a2a2a; height: 8px !important; }
+
+    /* Transport */
+    .transport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 16px;
+    }
+    .t-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .t-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .t-btn.play {
+      width: 58px;
+      height: 58px;
+      background: transparent;
+      border: 2px solid var(--blue);
+      box-shadow: 0 0 20px rgba(59,130,246,0.35);
+      color: var(--blue);
+    }
+    .t-btn.play svg { width: 26px; height: 26px; fill: var(--blue); stroke: none; }
+    .t-btn:active { transform: scale(0.94); }
+
+    /* Progress */
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 11px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-track {
+      flex: 1;
+      height: 4px;
+      background: #2a2a2a;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 18%;
+      background: var(--blue);
+      border-radius: 4px;
+    }
+    .progress-thumb {
+      position: absolute;
+      top: 50%;
+      left: 18%;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 6px rgba(0,0,0,0.5);
+    }
+
+    /* Volume */
+    .vol-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .vol-row svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.6; flex-shrink: 0; }
+    .vol-track {
+      flex: 1;
+      height: 4px;
+      background: #2a2a2a;
+      border-radius: 4px;
+      position: relative;
+    }
+    .vol-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 70%;
+      background: var(--blue);
+      border-radius: 4px;
+    }
+    .vol-thumb {
+      position: absolute;
+      top: 50%;
+      left: 70%;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Hidden audio / iframe container */
+    .audio-host {
+      display: none;
+    }
+    .embed-frame {
+      width: 100%;
+      height: 0;
+      border: none;
+      visibility: hidden;
+      position: absolute;
+    }
+
+    /* Categories grid */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .cat-btn {
+      background: var(--card2);
       border: 1px solid var(--border);
       border-radius: 14px;
-      overflow: hidden;
-      margin-bottom: 1.25rem;
-    }
-    .player-header {
-      padding: 1rem 1.25rem;
+      padding: 14px 8px 12px;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+      position: relative;
+    }
+    .cat-btn:active { background: #222; }
+    .cat-btn.active {
+      border-color: var(--blue);
+      background: rgba(59,130,246,0.08);
+    }
+    .cat-btn .icon-wrap {
+      width: 28px;
+      height: 28px;
+      display: flex;
       align-items: center;
-      border-bottom: 1px solid var(--border);
+      justify-content: center;
+      margin-bottom: 2px;
     }
-    .player-header h2 {
-      font-size: 1.15rem;
+    .cat-btn .icon-wrap svg {
+      width: 20px;
+      height: 20px;
+      stroke: #ccc;
+      fill: none;
+      stroke-width: 1.6;
+    }
+    .cat-btn.active .icon-wrap svg { stroke: var(--blue); }
+    .cat-btn .label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: #ddd;
+      text-transform: uppercase;
+    }
+    .cat-btn .sublabel {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    .cat-btn .chev {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.4;
+    }
+    .cat-btn .chev svg { width: 12px; height: 12px; stroke: #888; fill: none; stroke-width: 2; }
+
+    /* Quick controls */
+    .section-label {
+      font-size: 11px;
       font-weight: 600;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .player-header .status {
-      font-size: 0.8rem;
+    .section-label svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; }
+    .quick-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .quick-btn {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .quick-btn:active { background: #222; }
+    .quick-btn .q-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .quick-btn .q-top svg {
+      width: 16px;
+      height: 16px;
+      stroke: #aaa;
+      fill: none;
+      stroke-width: 1.7;
+    }
+    .quick-btn .q-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #ddd;
+      text-transform: uppercase;
+    }
+    .quick-btn .q-val {
+      font-size: 11px;
+      color: var(--muted);
+      padding-left: 22px;
+    }
+    .quick-btn .chev {
+      margin-left: auto;
+      opacity: 0.4;
+    }
+    .quick-btn .chev svg { width: 12px; height: 12px; stroke: #888; fill: none; stroke-width: 2; }
+
+    /* Feed list (when category expanded) */
+    .feed-list {
+      display: none;
+      margin-bottom: 16px;
+    }
+    .feed-list.visible { display: block; }
+    .feed-item {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .feed-item:active, .feed-item.active {
+      border-color: var(--blue);
+    }
+    .feed-item .fi-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .feed-item .fi-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #eee;
+    }
+    .feed-item .fi-desc {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .feed-item .fi-status {
+      font-size: 10px;
+      font-weight: 600;
       color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .feed-item .fi-status .s-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+    .feed-item.offline .fi-status { color: var(--dim); }
+    .feed-item.offline .fi-status .s-dot { background: var(--dim); }
+
+    /* Bottom nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: rgba(12,12,12,0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid #1e1e1e;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 12px;
+      min-width: 64px;
+    }
+    .nav-item svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+    }
+    .nav-item span {
+      font-size: 10px;
       font-weight: 500;
     }
-    .player-body {
-      position: relative;
-      width: 100%;
-      background: #000;
-      min-height: 280px;
+    .nav-item.active {
+      color: var(--blue);
     }
-    .player-body iframe {
-      width: 100%;
-      height: 320px;
-      border: none;
-      display: block;
-    }
-    .player-footer {
-      padding: 0.9rem 1.25rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      background: #0f172a;
-    }
-    .player-footer p {
-      color: var(--muted);
-      font-size: 0.85rem;
-      max-width: 60%;
-    }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: var(--accent);
-      color: white;
-      padding: 0.55rem 1rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .btn:hover { background: var(--accent-hover); }
-    .btn.secondary {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-    .btn.secondary:hover { background: var(--card-hover); }
-    /* Info cards */
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    .info-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.15rem;
-    }
-    .info-card h3 {
-      font-size: 1rem;
-      margin-bottom: 0.6rem;
-      color: var(--accent);
-    }
-    .info-card ul {
-      list-style: none;
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
-    .info-card li {
-      padding: 0.3rem 0;
-      border-bottom: 1px solid #1e293b;
-    }
-    .info-card li:last-child { border-bottom: none; }
-    .tg {
-      font-family: ui-monospace, monospace;
-      color: #93c5fd;
-      font-size: 0.85rem;
-    }
-    .delhi-banner {
-      background: linear-gradient(90deg, #1e3a5f, #1e293b);
-      border: 1px solid #3b82f6;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-    .delhi-banner strong { color: #93c5fd; }
-    footer {
+    .nav-item.active svg { stroke: var(--blue); }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Favorites / Map / More simple views */
+    .simple-view {
+      padding: 20px 4px;
       text-align: center;
-      padding: 2rem 1rem;
       color: var(--muted);
-      font-size: 0.85rem;
-      border-top: 1px solid var(--border);
-      margin-top: 2rem;
     }
-    footer a { color: var(--accent); text-decoration: none; }
-    /* Mobile */
-    @media (max-width: 600px) {
-      .player-body iframe { height: 260px; }
-      .player-footer { flex-direction: column; align-items: stretch; }
-      .player-footer p { max-width: 100%; }
-      .btn { justify-content: center; }
+    .simple-view h2 {
+      font-size: 18px;
+      color: #eee;
+      margin-bottom: 8px;
     }
+    .simple-view p { font-size: 13px; line-height: 1.5; }
+
+    /* Full map view */
+    #full-map {
+      height: calc(100vh - 160px);
+      height: calc(100dvh - 160px);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #eee;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    /* Now playing bar */
+    .now-playing {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 6px;
+      min-height: 18px;
+    }
+    .now-playing strong { color: #ccc; font-weight: 600; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Cincinnati Police Scanner</h1>
-    <p class="subtitle">Hamilton County • Cincinnati PD/FD • Delhi Township</p>
-    <div class="badge-row">
-      <span class="badge live">LIVE</span>
-      <span class="badge">Ohio MARCS-IP</span>
-      <span class="badge">Delhi Included</span>
-    </div>
-  </header>
-
-  <div class="container">
-    <div class="delhi-banner">
-      <div>
-        <strong>Delhi Township is covered</strong><br>
-        Delhi PD (TG <span class="tg">21203 / 31 DLHI PD</span>) and Delhi Fire (TG <span class="tg">21204</span>) appear on the <strong>Hamilton County</strong> feed. Western Law Dispatch (31 LE WEST) covers the Delhi area.
-      </div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" data-tab="hamilton">Hamilton County</button>
-      <button class="tab" data-tab="cincy-fire">Cincinnati Fire</button>
-      <button class="tab" data-tab="cincy-pd">Cincinnati Police</button>
-      <button class="tab" data-tab="talkgroups">Talkgroups</button>
-    </div>
-
-    <!-- Hamilton County Panel -->
-    <div id="hamilton" class="panel active">
-      <div class="player-card">
-        <div class="player-header">
-          <h2>Hamilton County Police, Fire & EMS</h2>
-          <span class="status">● Primary Feed</span>
-        </div>
-        <div class="player-body">
-          <iframe 
-            src="https://www.broadcastify.com/webPlayer/14527?bc=0" 
-            allow="autoplay; fullscreen" 
-            allowfullscreen
-            title="Hamilton County Live Scanner"
-            loading="eager">
-          </iframe>
-        </div>
-        <div class="player-footer">
-          <p>Includes Delhi Township, Norwood, Colerain, Green Twp, county law (East/West/Central), fire & EMS.</p>
-          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-            <a class="btn" href="https://www.broadcastify.com/listen/feed/14527" target="_blank" rel="noopener">Open Full Player</a>
-            <a class="btn secondary" href="https://www.broadcastify.com/webPlayer/14527" target="_blank" rel="noopener">Pop-out</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cincinnati Fire Panel -->
-    <div id="cincy-fire" class="panel">
-      <div class="player-card">
-        <div class="player-header">
-          <h2>Cincinnati Fire & EMS</h2>
-          <span class="status">● City Feed</span>
-        </div>
-        <div class="player-body">
-          <iframe 
-            src="https://www.broadcastify.com/webPlayer/5184?bc=0" 
-            allow="autoplay; fullscreen" 
-            allowfullscreen
-            title="Cincinnati Fire Live Scanner"
-            loading="lazy">
-          </iframe>
-        </div>
-        <div class="player-footer">
-          <p>City of Cincinnati Fire Department on Ohio MARCS (Zone A EMS + Fire Zones B–J).</p>
-          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-            <a class="btn" href="https://www.broadcastify.com/listen/feed/5184" target="_blank" rel="noopener">Open Full Player</a>
-            <a class="btn secondary" href="https://www.broadcastify.com/webPlayer/5184" target="_blank" rel="noopener">Pop-out</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cincinnati Police Panel -->
-    <div id="cincy-pd" class="panel">
-      <div class="player-card">
-        <div class="player-header">
-          <h2>Cincinnati Police</h2>
-          <span class="status">Status may vary</span>
-        </div>
-        <div class="player-body">
-          <iframe 
-            src="https://www.broadcastify.com/webPlayer/32619?bc=0" 
-            allow="autoplay; fullscreen" 
-            allowfullscreen
-            title="Cincinnati Police Live Scanner"
-            loading="lazy">
-          </iframe>
-        </div>
-        <div class="player-footer">
-          <p>CPD Districts 1–4. This feed has historically gone offline at times. Use the Full Player button if the embed is quiet.</p>
-          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-            <a class="btn" href="https://www.broadcastify.com/listen/feed/32619" target="_blank" rel="noopener">Open Full Player</a>
-            <a class="btn secondary" href="https://www.broadcastify.com/webPlayer/32619" target="_blank" rel="noopener">Pop-out</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Talkgroups Panel -->
-    <div id="talkgroups" class="panel">
-      <div class="info-grid">
-        <div class="info-card">
-          <h3>Delhi Township</h3>
-          <ul>
-            <li><span class="tg">21203</span> — 31 DLHI PD (Police)</li>
-            <li><span class="tg">21204</span> — 31 DLHI FD (Fire)</li>
-            <li><span class="tg">21205</span> — 31 DLHI SVC (Service)</li>
-            <li>Unit IDs: 8D10–8D99</li>
-          </ul>
-        </div>
-        <div class="info-card">
-          <h3>Cincinnati Police</h3>
-          <ul>
-            <li><span class="tg">55649</span> — 31 DIST 1</li>
-            <li><span class="tg">55650</span> — 31 DIST 2</li>
-            <li><span class="tg">55651</span> — 31 DIST 3</li>
-            <li><span class="tg">55652</span> — 31 DIST 4</li>
-            <li><span class="tg">55653</span> — 31 DIST 5</li>
-          </ul>
-        </div>
-        <div class="info-card">
-          <h3>Hamilton County Law</h3>
-          <ul>
-            <li><span class="tg">21071</span> — 31 LE EAST</li>
-            <li><span class="tg">21072</span> — 31 LE WEST (Delhi area)</li>
-            <li><span class="tg">21073</span> — 31 LE CENT</li>
-          </ul>
-        </div>
-        <div class="info-card">
-          <h3>Other Key Agencies</h3>
-          <ul>
-            <li><span class="tg">55905</span> — Norwood PD</li>
-            <li><span class="tg">55705</span> — UC Police</li>
-            <li><span class="tg">55904</span> — Xavier PD</li>
-          </ul>
-        </div>
-      </div>
-      <p style="margin-top:1.25rem;color:var(--muted);font-size:0.9rem;">
-        Full database: <a href="https://www.radioreference.com/db/sid/6643" target="_blank" rel="noopener" style="color:var(--accent)">RadioReference – Ohio MARCS-IP</a>
-      </p>
+  <!-- Status bar visual -->
+  <div class="status-bar">
+    <span id="clock">9:41</span>
+    <div class="right">
+      <svg viewBox="0 0 24 24"><path d="M2 17h2v2H2v-2zm4-3h2v5H6v-5zm4-3h2v8h-2v-8zm4-3h2v11h-2V8zm4-3h2v14h-2V5z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
     </div>
   </div>
 
-  <footer>
-    <p>For educational and hobby listening only. Do not interfere with emergency communications.</p>
-    <p style="margin-top:0.5rem">
-      <a href="https://github.com/joeyfrogge-jpg/cincinnati-police-scanner">GitHub Repo</a> ·
-      Data from Broadcastify & RadioReference
-    </p>
-  </footer>
+  <!-- App header -->
+  <div class="app-header">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 48 48" fill="none">
+          <path d="M8 36V20l8-6 8 6v16H8z" stroke="#fff" stroke-width="1.8"/>
+          <path d="M24 30V14l8-6 8 6v22H24z" stroke="#fff" stroke-width="1.8"/>
+          <path d="M12 36h8M28 36h8" stroke="#fff" stroke-width="1.5"/>
+          <rect x="14" y="24" width="4" height="4" stroke="#fff" stroke-width="1.2"/>
+          <rect x="30" y="20" width="4" height="4" stroke="#fff" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="title">CINCINNATI</span>
+        <span class="sub">Police Scanner</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
+        <span class="live-dot"></span>
+        <span>LIVE</span>
+      </div>
+      <button class="icon-btn" id="settings-btn" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </div>
 
+  <div class="main-scroll">
+    <!-- SCANNER VIEW -->
+    <div id="view-scanner" class="view active">
+      <!-- Map -->
+      <div class="map-card">
+        <div class="map-header">
+          <div class="map-loc">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+            <div class="map-loc-text">
+              <span class="city" id="map-city">CINCINNATI, OH</span>
+              <span class="coords" id="map-coords">39.1031° N  84.5120° W</span>
+            </div>
+          </div>
+          <button class="map-action" id="map-expand" aria-label="Expand map">
+            <svg viewBox="0 0 24 24"><path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6"/></svg>
+          </button>
+        </div>
+        <div id="map"></div>
+      </div>
+
+      <!-- Live Feed Player -->
+      <div class="player-card">
+        <div class="player-top">
+          <div class="player-label">
+            <span class="dot"></span>
+            <span>LIVE FEED</span>
+          </div>
+          <div class="signal-icon">
+            <svg viewBox="0 0 24 24"><path d="M2 17h2v2H2v-2zm4-3h2v5H6v-5zm4-3h2v8h-2v-8zm4-3h2v11h-2V8zm4-3h2v14h-2V5z"/></svg>
+          </div>
+        </div>
+
+        <div class="waveform" id="waveform"></div>
+
+        <div class="transport">
+          <button class="t-btn" id="skip-back" aria-label="Back 10s">
+            <svg viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/><text x="8" y="15" font-size="7" fill="currentColor" stroke="none" font-weight="700">10</text></svg>
+          </button>
+          <button class="t-btn play" id="play-btn" aria-label="Play / Pause">
+            <svg id="icon-play" viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+            <svg id="icon-pause" viewBox="0 0 24 24" style="display:none"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+          </button>
+          <button class="t-btn" id="skip-fwd" aria-label="Forward 10s">
+            <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/><text x="9" y="15" font-size="7" fill="currentColor" stroke="none" font-weight="700">10</text></svg>
+          </button>
+        </div>
+
+        <div class="progress-row">
+          <span id="time-cur">00:00</span>
+          <div class="progress-track" id="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+            <div class="progress-thumb" id="progress-thumb"></div>
+          </div>
+          <span id="time-dur">LIVE</span>
+        </div>
+
+        <div class="vol-row">
+          <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <div class="vol-track" id="vol-track">
+            <div class="vol-fill" id="vol-fill"></div>
+            <div class="vol-thumb" id="vol-thumb"></div>
+          </div>
+          <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </div>
+
+        <div class="now-playing" id="now-playing">Select a channel to listen</div>
+      </div>
+
+      <!-- Categories -->
+      <div class="cat-grid" id="cat-grid">
+        <button class="cat-btn active" data-cat="dispatch">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <span class="label">DISPATCH</span>
+          <span class="sublabel">Primary</span>
+          <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="cat-btn" data-cat="police">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <span class="label">POLICE</span>
+          <span class="sublabel">Law Enforcement</span>
+          <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="cat-btn" data-cat="fire">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M12 2c0 0-5 5-5 10a5 5 0 0 0 10 0c0-5-5-10-5-10z"/><path d="M12 12v6"/></svg>
+          </div>
+          <span class="label">FIRE / EMS</span>
+          <span class="sublabel">Fire & Rescue</span>
+          <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="cat-btn" data-cat="traffic">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <span class="label">TRAFFIC</span>
+          <span class="sublabel">Road Conditions</span>
+          <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="cat-btn" data-cat="metro">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <span class="label">METRO</span>
+          <span class="sublabel">Other Agencies</span>
+          <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+        <button class="cat-btn" data-cat="favorites">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <span class="label">FAVORITES</span>
+          <span class="sublabel">Custom Channels</span>
+          <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
+      </div>
+
+      <!-- Dynamic feed list for selected category -->
+      <div class="feed-list" id="feed-list"></div>
+
+      <!-- Quick Controls -->
+      <div class="section-label">
+        <span>QUICK CONTROLS</span>
+        <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
+      </div>
+      <div class="quick-grid">
+        <button class="quick-btn" id="qc-location">
+          <div class="q-top">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span class="q-label">LOCATION</span>
+            <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+          </div>
+          <span class="q-val" id="qc-loc-val">Cincinnati</span>
+        </button>
+        <button class="quick-btn" id="qc-alerts">
+          <div class="q-top">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="q-label">ALERTS</span>
+            <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+          </div>
+          <span class="q-val" id="qc-alerts-val">On</span>
+        </button>
+        <button class="quick-btn" id="qc-dark">
+          <div class="q-top">
+            <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <span class="q-label">DARK MODE</span>
+            <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+          </div>
+          <span class="q-val">On</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- FAVORITES VIEW -->
+    <div id="view-favorites" class="view">
+      <div class="simple-view">
+        <h2>Favorites</h2>
+        <p>Tap the star on any feed in Scanner to add it here. Your custom channels will appear in this list.</p>
+        <div id="fav-list" style="margin-top:20px;text-align:left"></div>
+      </div>
+    </div>
+
+    <!-- MAP VIEW -->
+    <div id="view-map" class="view">
+      <div id="full-map"></div>
+      <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:10px">Active feed location highlighted</p>
+    </div>
+
+    <!-- MORE VIEW -->
+    <div id="view-more" class="view">
+      <div class="simple-view">
+        <h2>About</h2>
+        <p style="margin-bottom:16px">Free live scanner for Cincinnati, Hamilton County & Delhi Township only. Feeds powered by Broadcastify public streams.</p>
+        <p style="margin-bottom:8px"><strong style="color:#ccc">Coverage</strong></p>
+        <p style="margin-bottom:16px;font-size:12px;line-height:1.6">Hamilton County Police / Fire / EMS (includes Delhi Township PD & FD), Cincinnati Fire & EMS, area law dispatch on Ohio MARCS-IP.</p>
+        <p style="font-size:11px;opacity:0.7">For educational & hobby listening only. Do not interfere with emergency communications. Some channels may be encrypted or offline.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="scanner">
+      <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
+      <span>Scanner</span>
+    </button>
+    <button class="nav-item" data-view="favorites">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>Favorites</span>
+    </button>
+    <button class="nav-item" data-view="map">
+      <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+      <span>Map</span>
+    </button>
+    <button class="nav-item" data-view="more">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none"/></svg>
+      <span>More</span>
+    </button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Audio host (embeds Broadcastify web players) -->
+  <div class="audio-host" id="audio-host"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // Simple tab switching
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.tab).classList.add('active');
+    // ========== FREE CINCINNATI / HAMILTON / DELHI FEEDS ONLY ==========
+    const FEEDS = {
+      dispatch: [
+        {
+          id: '14527',
+          name: 'Hamilton County Dispatch',
+          desc: 'Police, Fire & EMS + firegrounds (includes Delhi Twp)',
+          lat: 39.1031,
+          lon: -84.5120,
+          label: 'CINCINNATI, OH',
+          coords: '39.1031° N  84.5120° W',
+          status: 'online',
+          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+        }
+      ],
+      police: [
+        {
+          id: '14527',
+          name: 'Hamilton County Law',
+          desc: 'County law East / West / Central (Delhi on West)',
+          lat: 39.1031,
+          lon: -84.5120,
+          label: 'CINCINNATI, OH',
+          coords: '39.1031° N  84.5120° W',
+          status: 'online',
+          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+        },
+        {
+          id: '32619',
+          name: 'Cincinnati Police',
+          desc: 'CPD Districts 1–4 (feed currently offline)',
+          lat: 39.1031,
+          lon: -84.5120,
+          label: 'CINCINNATI, OH',
+          coords: '39.1031° N  84.5120° W',
+          status: 'offline',
+          player: 'https://www.broadcastify.com/webPlayer/32619?bc=0'
+        }
+      ],
+      fire: [
+        {
+          id: '5184',
+          name: 'Cincinnati Fire & EMS',
+          desc: 'City CFD Zone A EMS + Fire Zones B–J',
+          lat: 39.1031,
+          lon: -84.5120,
+          label: 'CINCINNATI, OH',
+          coords: '39.1031° N  84.5120° W',
+          status: 'online',
+          player: 'https://www.broadcastify.com/webPlayer/5184?bc=0'
+        },
+        {
+          id: '14527',
+          name: 'Hamilton County Fire / EMS',
+          desc: 'County fire East / West / Valley + firegrounds',
+          lat: 39.1031,
+          lon: -84.5120,
+          label: 'CINCINNATI, OH',
+          coords: '39.1031° N  84.5120° W',
+          status: 'online',
+          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+        }
+      ],
+      traffic: [
+        {
+          id: '14527',
+          name: 'Area Road / Incident Traffic',
+          desc: 'Covered via primary Hamilton County dispatch',
+          lat: 39.1031,
+          lon: -84.5120,
+          label: 'CINCINNATI, OH',
+          coords: '39.1031° N  84.5120° W',
+          status: 'online',
+          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+        }
+      ],
+      metro: [
+        {
+          id: '14527',
+          name: 'Hamilton County Metro Agencies',
+          desc: 'Norwood, Colerain, Green Twp, UC area via county feed',
+          lat: 39.1031,
+          lon: -84.5120,
+          label: 'CINCINNATI, OH',
+          coords: '39.1031° N  84.5120° W',
+          status: 'online',
+          player: 'https://www.broadcastify.com/webPlayer/14527?bc=0'
+        }
+      ],
+      favorites: []
+    };
+
+    // State
+    let currentCat = 'dispatch';
+    let currentFeed = FEEDS.dispatch[0];
+    let isPlaying = false;
+    let favorites = JSON.parse(localStorage.getItem('cps_favs') || '[]');
+    let alertsOn = true;
+    let map, fullMap, marker, fullMarker;
+    let waveTimer = null;
+    let playStart = 0;
+
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      const h = now.getHours();
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clock').textContent = `${h}:${m}`;
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+
+    // Waveform bars
+    const waveform = document.getElementById('waveform');
+    const BAR_COUNT = 48;
+    for (let i = 0; i < BAR_COUNT; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'wave-bar inactive';
+      bar.style.height = '8px';
+      waveform.appendChild(bar);
+    }
+    const bars = waveform.querySelectorAll('.wave-bar');
+
+    function animateWave(active) {
+      if (waveTimer) clearInterval(waveTimer);
+      if (!active) {
+        bars.forEach(b => {
+          b.classList.add('inactive');
+          b.style.height = '8px';
+        });
+        return;
+      }
+      waveTimer = setInterval(() => {
+        bars.forEach((b, i) => {
+          b.classList.remove('inactive');
+          const h = 6 + Math.random() * 42 + Math.sin(Date.now() / 200 + i * 0.4) * 8;
+          b.style.height = Math.max(6, Math.min(50, h)) + 'px';
+        });
+      }, 120);
+    }
+
+    // Map init
+    function initMaps() {
+      const darkTiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+      map = L.map('map', { zoomControl: false, attributionControl: false }).setView([39.1031, -84.5120], 11);
+      L.tileLayer(darkTiles, { maxZoom: 18 }).addTo(map);
+      marker = L.circleMarker([39.1031, -84.5120], {
+        radius: 10,
+        color: '#3b82f6',
+        fillColor: '#3b82f6',
+        fillOpacity: 0.7,
+        weight: 2
+      }).addTo(map);
+      L.circle([39.1031, -84.5120], {
+        radius: 4000,
+        color: '#3b82f6',
+        fillColor: '#3b82f6',
+        fillOpacity: 0.08,
+        weight: 1
+      }).addTo(map);
+
+      fullMap = L.map('full-map', { zoomControl: true, attributionControl: false }).setView([39.1031, -84.5120], 12);
+      L.tileLayer(darkTiles, { maxZoom: 18 }).addTo(fullMap);
+      fullMarker = L.circleMarker([39.1031, -84.5120], {
+        radius: 12,
+        color: '#3b82f6',
+        fillColor: '#3b82f6',
+        fillOpacity: 0.8,
+        weight: 2
+      }).addTo(fullMap);
+    }
+
+    function updateMapForFeed(feed) {
+      if (!feed) return;
+      document.getElementById('map-city').textContent = feed.label;
+      document.getElementById('map-coords').textContent = feed.coords;
+      document.getElementById('qc-loc-val').textContent = feed.label.split(',')[0];
+      if (marker) {
+        marker.setLatLng([feed.lat, feed.lon]);
+        map.setView([feed.lat, feed.lon], 11);
+      }
+      if (fullMarker) {
+        fullMarker.setLatLng([feed.lat, feed.lon]);
+        fullMap.setView([feed.lat, feed.lon], 12);
+      }
+    }
+
+    // Render feed list for category
+    function renderFeeds(cat) {
+      const list = document.getElementById('feed-list');
+      const items = FEEDS[cat] || [];
+      if (!items.length) {
+        list.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:8px 0">No channels in this category yet.</p>';
+        list.classList.add('visible');
+        return;
+      }
+      list.innerHTML = items.map(f => `
+        <div class="feed-item ${f.status === 'offline' ? 'offline' : ''} ${currentFeed && currentFeed.id === f.id && currentFeed.name === f.name ? 'active' : ''}" data-id="${f.id}" data-name="${f.name}">
+          <div class="fi-left">
+            <span class="fi-name">${f.name}</span>
+            <span class="fi-desc">${f.desc}</span>
+          </div>
+          <div class="fi-status"><span class="s-dot"></span>${f.status === 'online' ? 'LIVE' : 'OFFLINE'}</div>
+        </div>
+      `).join('');
+      list.classList.add('visible');
+      list.querySelectorAll('.feed-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const feed = items.find(x => x.id === el.dataset.id && x.name === el.dataset.name);
+          if (feed) selectFeed(feed);
+        });
       });
+    }
+
+    function selectFeed(feed) {
+      currentFeed = feed;
+      updateMapForFeed(feed);
+      document.getElementById('now-playing').innerHTML = `<strong>${feed.name}</strong>`;
+      // Update active states
+      document.querySelectorAll('.feed-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === feed.id && el.dataset.name === feed.name);
+      });
+      // Load player
+      loadPlayer(feed);
+      if (feed.status === 'online') {
+        isPlaying = true;
+        setPlayUI(true);
+        animateWave(true);
+        playStart = Date.now();
+        startProgress();
+      } else {
+        isPlaying = false;
+        setPlayUI(false);
+        animateWave(false);
+        showToast('This feed is currently offline');
+      }
+    }
+
+    function loadPlayer(feed) {
+      const host = document.getElementById('audio-host');
+      host.innerHTML = '';
+      // Open Broadcastify player in a controlled way: embed + also provide direct listen path
+      const iframe = document.createElement('iframe');
+      iframe.className = 'embed-frame';
+      iframe.src = feed.player;
+      iframe.allow = 'autoplay; fullscreen';
+      iframe.setAttribute('allowfullscreen', '');
+      host.appendChild(iframe);
+      // For free users the most reliable path is the official player page
+      // We keep the embed for presence and open full player on demand
+    }
+
+    function setPlayUI(playing) {
+      document.getElementById('icon-play').style.display = playing ? 'none' : 'block';
+      document.getElementById('icon-pause').style.display = playing ? 'block' : 'none';
+    }
+
+    let progressInterval = null;
+    function startProgress() {
+      if (progressInterval) clearInterval(progressInterval);
+      progressInterval = setInterval(() => {
+        if (!isPlaying) return;
+        const sec = Math.floor((Date.now() - playStart) / 1000);
+        const m = String(Math.floor(sec / 60)).padStart(2, '0');
+        const s = String(sec % 60).padStart(2, '0');
+        document.getElementById('time-cur').textContent = `${m}:${s}`;
+        // Live streams have no fixed duration — keep a moving fill for visual feedback
+        const pct = Math.min(95, 15 + (sec % 80));
+        document.getElementById('progress-fill').style.width = pct + '%';
+        document.getElementById('progress-thumb').style.left = pct + '%';
+      }, 1000);
+    }
+
+    // Category clicks
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCat = btn.dataset.cat;
+        renderFeeds(currentCat);
+        const first = (FEEDS[currentCat] || [])[0];
+        if (first) selectFeed(first);
+      });
+    });
+
+    // Play / Pause
+    document.getElementById('play-btn').addEventListener('click', () => {
+      if (!currentFeed) return;
+      if (currentFeed.status === 'offline') {
+        showToast('Feed is offline');
+        return;
+      }
+      isPlaying = !isPlaying;
+      setPlayUI(isPlaying);
+      animateWave(isPlaying);
+      if (isPlaying) {
+        playStart = Date.now();
+        startProgress();
+        // Open full Broadcastify player so user gets live audio (free tier)
+        window.open(currentFeed.player.replace('webPlayer', 'listen/feed').replace('?bc=0', ''), '_blank');
+        showToast('Opening live player…');
+      } else {
+        if (progressInterval) clearInterval(progressInterval);
+      }
+    });
+
+    document.getElementById('skip-back').addEventListener('click', () => showToast('Live stream — skip not available'));
+    document.getElementById('skip-fwd').addEventListener('click', () => showToast('Live stream — skip not available'));
+
+    // Volume visual (non-functional on external player, visual only)
+    let vol = 70;
+    function setVolUI(v) {
+      vol = Math.max(0, Math.min(100, v));
+      document.getElementById('vol-fill').style.width = vol + '%';
+      document.getElementById('vol-thumb').style.left = vol + '%';
+    }
+    document.getElementById('vol-track').addEventListener('click', e => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      setVolUI(((e.clientX - rect.left) / rect.width) * 100);
+    });
+
+    // Nav
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        const v = item.dataset.view;
+        document.querySelectorAll('.view').forEach(vw => vw.classList.remove('active'));
+        document.getElementById('view-' + v).classList.add('active');
+        if (v === 'map' && fullMap) {
+          setTimeout(() => fullMap.invalidateSize(), 100);
+        }
+        if (v === 'favorites') renderFavorites();
+      });
+    });
+
+    function renderFavorites() {
+      const el = document.getElementById('fav-list');
+      if (!favorites.length) {
+        el.innerHTML = '<p style="color:var(--muted);font-size:13px">No favorites yet.</p>';
+        return;
+      }
+      el.innerHTML = favorites.map(f => `
+        <div class="feed-item" style="margin-bottom:8px">
+          <div class="fi-left">
+            <span class="fi-name">${f.name}</span>
+            <span class="fi-desc">${f.desc || ''}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Quick controls
+    document.getElementById('qc-alerts').addEventListener('click', () => {
+      alertsOn = !alertsOn;
+      document.getElementById('qc-alerts-val').textContent = alertsOn ? 'On' : 'Off';
+      showToast('Alerts ' + (alertsOn ? 'enabled' : 'disabled'));
+    });
+    document.getElementById('qc-location').addEventListener('click', () => {
+      showToast('Location locked to Cincinnati / Hamilton County');
+    });
+    document.getElementById('qc-dark').addEventListener('click', () => {
+      showToast('Dark mode is always on for this scanner');
+    });
+    document.getElementById('map-expand').addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelector('.nav-item[data-view="map"]').classList.add('active');
+      document.querySelectorAll('.view').forEach(vw => vw.classList.remove('active'));
+      document.getElementById('view-map').classList.add('active');
+      setTimeout(() => fullMap && fullMap.invalidateSize(), 100);
+    });
+    document.getElementById('settings-btn').addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      document.querySelector('.nav-item[data-view="more"]').classList.add('active');
+      document.querySelectorAll('.view').forEach(vw => vw.classList.remove('active'));
+      document.getElementById('view-more').classList.add('active');
+    });
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // Boot
+    window.addEventListener('load', () => {
+      initMaps();
+      renderFeeds('dispatch');
+      selectFeed(FEEDS.dispatch[0]);
+      // Pre-warm map size
+      setTimeout(() => { if (map) map.invalidateSize(); }, 200);
     });
   </script>
 </body>
