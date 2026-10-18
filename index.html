@@ -37,7 +37,6 @@
       min-height: 100dvh;
       background: #0a0a0a;
     }
-
     .status-bar {
       height: 44px;
       display: flex;
@@ -51,7 +50,6 @@
     }
     .status-bar .right { display: flex; gap: 5px; align-items: center; }
     .status-bar svg { width: 16px; height: 16px; fill: #fff; }
-
     .app-header {
       display: flex;
       align-items: center;
@@ -83,13 +81,10 @@
       color: var(--muted); display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
     .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-
     .main-scroll {
       flex: 1; overflow-y: auto; overflow-x: hidden;
       padding: 0 14px 100px; -webkit-overflow-scrolling: touch;
     }
-
-    /* Map */
     .map-card {
       background: var(--card); border-radius: 16px; overflow: hidden;
       border: 1px solid var(--border); margin-bottom: 14px; position: relative;
@@ -115,8 +110,6 @@
     #map { height: 170px; width: 100%; background: #0d0d0d; }
     .leaflet-control-attribution { display: none !important; }
     .leaflet-control-zoom { display: none !important; }
-
-    /* Player */
     .player-card {
       background: var(--card); border-radius: 16px; border: 1px solid var(--border);
       padding: 16px; margin-bottom: 16px;
@@ -133,7 +126,6 @@
       box-shadow: 0 0 10px var(--blue); animation: pulse 1.6s infinite;
     }
     .signal-icon svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.6; }
-
     .waveform {
       height: 48px; display: flex; align-items: center; justify-content: center;
       gap: 2px; margin-bottom: 14px; overflow: hidden;
@@ -143,7 +135,6 @@
       transition: height 0.12s ease; opacity: 0.85;
     }
     .wave-bar.inactive { background: #2a2a2a; height: 8px !important; }
-
     .transport {
       display: flex; align-items: center; justify-content: center; gap: 24px; margin-bottom: 12px;
     }
@@ -159,7 +150,6 @@
     }
     .t-btn.play svg { width: 26px; height: 26px; fill: var(--blue); stroke: none; }
     .t-btn:active { transform: scale(0.94); }
-
     .progress-row {
       display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
       font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums;
@@ -176,7 +166,6 @@
       background: #fff; border-radius: 50%; transform: translate(-50%, -50%);
       box-shadow: 0 0 6px rgba(0,0,0,0.5);
     }
-
     .vol-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .vol-row svg { width: 16px; height: 16px; stroke: var(--muted); fill: none; stroke-width: 1.6; flex-shrink: 0; }
     .vol-track { flex: 1; height: 4px; background: #2a2a2a; border-radius: 4px; position: relative; }
@@ -185,13 +174,10 @@
       position: absolute; top: 50%; left: 70%; width: 12px; height: 12px;
       background: #fff; border-radius: 50%; transform: translate(-50%, -50%);
     }
-
     .now-playing {
       font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; min-height: 18px;
     }
     .now-playing strong { color: #ccc; font-weight: 600; }
-
-    /* Visible Broadcastify player — this is how free audio is heard */
     .bcfy-wrap {
       border-radius: 12px; overflow: hidden; border: 1px solid #2a2a2a;
       background: #000; margin-bottom: 10px;
@@ -207,8 +193,6 @@
     }
     .listen-btn:active { opacity: 0.9; }
     .listen-btn svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 2; }
-
-    /* Categories */
     .cat-grid {
       display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 14px;
     }
@@ -228,14 +212,12 @@
     .cat-btn .sublabel { font-size: 9px; color: var(--muted); letter-spacing: 0.3px; text-transform: uppercase; }
     .cat-btn .chev { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); opacity: 0.4; }
     .cat-btn .chev svg { width: 12px; height: 12px; stroke: #888; fill: none; stroke-width: 2; }
-
     .section-label {
       font-size: 11px; font-weight: 600; letter-spacing: 1.2px; color: var(--muted);
       text-transform: uppercase; margin-bottom: 10px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .section-label svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; }
-
     .quick-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
     .quick-btn {
       background: var(--card2); border: 1px solid var(--border); border-radius: 14px;
@@ -248,7 +230,6 @@
     .quick-btn .q-val { font-size: 11px; color: var(--muted); padding-left: 22px; }
     .quick-btn .chev { margin-left: auto; opacity: 0.4; }
     .quick-btn .chev svg { width: 12px; height: 12px; stroke: #888; fill: none; stroke-width: 2; }
-
     .feed-list { display: none; margin-bottom: 16px; }
     .feed-list.visible { display: block; }
     .feed-item {
@@ -267,7 +248,6 @@
     .feed-item .fi-status .s-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
     .feed-item.offline .fi-status { color: var(--dim); }
     .feed-item.offline .fi-status .s-dot { background: var(--dim); }
-
     .bottom-nav {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 430px;
@@ -284,18 +264,15 @@
     .nav-item span { font-size: 10px; font-weight: 500; }
     .nav-item.active { color: var(--blue); }
     .nav-item.active svg { stroke: var(--blue); }
-
     .view { display: none; }
     .view.active { display: block; }
     .simple-view { padding: 20px 4px; text-align: center; color: var(--muted); }
     .simple-view h2 { font-size: 18px; color: #eee; margin-bottom: 8px; }
     .simple-view p { font-size: 13px; line-height: 1.5; }
-
     #full-map {
       height: calc(100vh - 160px); height: calc(100dvh - 160px);
       border-radius: 16px; overflow: hidden; border: 1px solid var(--border);
     }
-
     .toast {
       position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
       background: #1e1e1e; border: 1px solid #333; color: #eee;
@@ -314,7 +291,6 @@
       <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
     </div>
   </div>
-
   <div class="app-header">
     <div class="brand">
       <div class="brand-icon">
@@ -342,10 +318,8 @@
       </button>
     </div>
   </div>
-
   <div class="main-scroll">
     <div id="view-scanner" class="view active">
-      <!-- MAP -->
       <div class="map-card">
         <div class="map-header">
           <div class="map-loc">
@@ -361,8 +335,6 @@
         </div>
         <div id="map"></div>
       </div>
-
-      <!-- PLAYER -->
       <div class="player-card">
         <div class="player-top">
           <div class="player-label">
@@ -373,9 +345,7 @@
             <svg viewBox="0 0 24 24"><path d="M2 17h2v2H2v-2zm4-3h2v5H6v-5zm4-3h2v8h-2v-8zm4-3h2v11h-2V8zm4-3h2v14h-2V5z"/></svg>
           </div>
         </div>
-
         <div class="waveform" id="waveform"></div>
-
         <div class="transport">
           <button class="t-btn" id="skip-back" aria-label="Back 10s">
             <svg viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
@@ -388,7 +358,6 @@
             <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>
           </button>
         </div>
-
         <div class="progress-row">
           <span id="time-cur">00:00</span>
           <div class="progress-track">
@@ -397,7 +366,6 @@
           </div>
           <span>LIVE</span>
         </div>
-
         <div class="vol-row">
           <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
           <div class="vol-track" id="vol-track">
@@ -406,10 +374,7 @@
           </div>
           <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
         </div>
-
         <div class="now-playing" id="now-playing">Select a channel below</div>
-
-        <!-- Official Broadcastify player (free audio) -->
         <div class="bcfy-wrap" id="bcfy-wrap">
           <iframe id="bcfy-player" src="about:blank" allow="autoplay; fullscreen" allowfullscreen title="Live scanner audio"></iframe>
         </div>
@@ -418,8 +383,6 @@
           LISTEN LIVE — TAP TO HEAR
         </a>
       </div>
-
-      <!-- CATEGORIES -->
       <div class="cat-grid" id="cat-grid">
         <button class="cat-btn active" data-cat="dispatch">
           <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg></div>
@@ -439,16 +402,16 @@
           <span class="sublabel">Fire & Rescue</span>
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
+        <button class="cat-btn" data-cat="delhi">
+          <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <span class="label">DELHI</span>
+          <span class="sublabel">Township</span>
+          <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
+        </button>
         <button class="cat-btn" data-cat="traffic">
           <div class="icon-wrap"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
           <span class="label">TRAFFIC</span>
           <span class="sublabel">Road Conditions</span>
-          <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
-        </button>
-        <button class="cat-btn" data-cat="metro">
-          <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-          <span class="label">METRO</span>
-          <span class="sublabel">Other Agencies</span>
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
         <button class="cat-btn" data-cat="favorites">
@@ -458,9 +421,7 @@
           <span class="chev"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>
         </button>
       </div>
-
       <div class="feed-list" id="feed-list"></div>
-
       <div class="section-label">
         <span>QUICK CONTROLS</span>
         <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6"/></svg>
@@ -492,7 +453,6 @@
         </button>
       </div>
     </div>
-
     <div id="view-favorites" class="view">
       <div class="simple-view">
         <h2>Favorites</h2>
@@ -500,12 +460,10 @@
         <div id="fav-list" style="margin-top:20px;text-align:left"></div>
       </div>
     </div>
-
     <div id="view-map" class="view">
       <div id="full-map"></div>
       <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:10px">Active feed location</p>
     </div>
-
     <div id="view-more" class="view">
       <div class="simple-view">
         <h2>About</h2>
@@ -513,12 +471,11 @@
         <p style="margin-bottom:8px"><strong style="color:#ccc">How to listen</strong></p>
         <p style="margin-bottom:16px;font-size:12px;line-height:1.6">Tap a channel, then use the player box or the blue <strong>LISTEN LIVE</strong> button. Audio is provided free by Broadcastify (a short ad may play first).</p>
         <p style="margin-bottom:8px"><strong style="color:#ccc">Delhi Township</strong></p>
-        <p style="margin-bottom:16px;font-size:12px;line-height:1.6">Delhi PD (TG 21203) and Delhi Fire (TG 21204) are on the Hamilton County feed. Select <strong>Delhi Township</strong> under Police or Dispatch — map centers on Delhi and the same live stream plays.</p>
+        <p style="margin-bottom:16px;font-size:12px;line-height:1.6">Tap the <strong>DELHI</strong> category for its own channels: Delhi Township (All), Delhi PD, Delhi Fire, and West Law. Map centers on Delhi Township. Live audio is the free Hamilton County feed that carries Delhi talkgroups.</p>
         <p style="font-size:11px;opacity:0.7">Educational / hobby use only. Do not interfere with emergency communications.</p>
       </div>
     </div>
   </div>
-
   <nav class="bottom-nav">
     <button class="nav-item active" data-view="scanner">
       <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
@@ -537,34 +494,19 @@
       <span>More</span>
     </button>
   </nav>
-
   <div class="toast" id="toast"></div>
-
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
-    // Free Cincinnati / Hamilton / Delhi feeds only
     const FEEDS = {
       dispatch: [
         {
           key: 'hc-dispatch',
           id: '14527',
           name: 'Hamilton County Dispatch',
-          desc: 'Police, Fire & EMS + firegrounds (includes Delhi)',
+          desc: 'Police, Fire & EMS + firegrounds',
           lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
-          status: 'online',
-          listen: 'https://www.broadcastify.com/listen/feed/14527',
-          player: 'https://www.broadcastify.com/webPlayer/14527'
-        },
-        {
-          key: 'delhi-dispatch',
-          id: '14527',
-          name: 'Delhi Township',
-          desc: 'Delhi PD (TG 21203) & Fire (TG 21204) via county feed',
-          lat: 39.0923, lon: -84.6233,
-          label: 'DELHI TOWNSHIP, OH',
-          coords: '39.0923° N  84.6233° W',
           status: 'online',
           listen: 'https://www.broadcastify.com/listen/feed/14527',
           player: 'https://www.broadcastify.com/webPlayer/14527'
@@ -572,22 +514,10 @@
       ],
       police: [
         {
-          key: 'delhi-pd',
-          id: '14527',
-          name: 'Delhi Township PD',
-          desc: 'Delhi Police — TG 21203 / 31 DLHI PD (on Hamilton feed)',
-          lat: 39.0923, lon: -84.6233,
-          label: 'DELHI TOWNSHIP, OH',
-          coords: '39.0923° N  84.6233° W',
-          status: 'online',
-          listen: 'https://www.broadcastify.com/listen/feed/14527',
-          player: 'https://www.broadcastify.com/webPlayer/14527'
-        },
-        {
           key: 'hc-law',
           id: '14527',
           name: 'Hamilton County Law',
-          desc: 'East / West / Central (Delhi on West)',
+          desc: 'East / West / Central law dispatch',
           lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
@@ -599,7 +529,7 @@
           key: 'cpd',
           id: '32619',
           name: 'Cincinnati Police',
-          desc: 'CPD Districts (feed currently offline on Broadcastify)',
+          desc: 'CPD Districts (feed currently offline)',
           lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
@@ -622,18 +552,6 @@
           player: 'https://www.broadcastify.com/webPlayer/5184'
         },
         {
-          key: 'delhi-fd',
-          id: '14527',
-          name: 'Delhi Township Fire',
-          desc: 'Delhi FD TG 21204 via Hamilton County feed',
-          lat: 39.0923, lon: -84.6233,
-          label: 'DELHI TOWNSHIP, OH',
-          coords: '39.0923° N  84.6233° W',
-          status: 'online',
-          listen: 'https://www.broadcastify.com/listen/feed/14527',
-          player: 'https://www.broadcastify.com/webPlayer/14527'
-        },
-        {
           key: 'hc-fire',
           id: '14527',
           name: 'Hamilton County Fire / EMS',
@@ -646,26 +564,62 @@
           player: 'https://www.broadcastify.com/webPlayer/14527'
         }
       ],
+      delhi: [
+        {
+          key: 'delhi-all',
+          id: '14527',
+          name: 'Delhi Township (All)',
+          desc: 'Delhi PD TG 21203 + Fire TG 21204 — Hamilton County feed',
+          lat: 39.0923, lon: -84.6233,
+          label: 'DELHI TOWNSHIP, OH',
+          coords: '39.0923° N  84.6233° W',
+          status: 'online',
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
+        },
+        {
+          key: 'delhi-pd',
+          id: '14527',
+          name: 'Delhi Township PD',
+          desc: 'Police — TG 21203 / 31 DLHI PD',
+          lat: 39.0923, lon: -84.6233,
+          label: 'DELHI TOWNSHIP, OH',
+          coords: '39.0923° N  84.6233° W',
+          status: 'online',
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
+        },
+        {
+          key: 'delhi-fd',
+          id: '14527',
+          name: 'Delhi Township Fire',
+          desc: 'Fire / EMS — TG 21204 / 31 DLHI FD',
+          lat: 39.0923, lon: -84.6233,
+          label: 'DELHI TOWNSHIP, OH',
+          coords: '39.0923° N  84.6233° W',
+          status: 'online',
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
+        },
+        {
+          key: 'delhi-west',
+          id: '14527',
+          name: 'West Law (covers Delhi)',
+          desc: '31 LE WEST — Hamilton County Western law dispatch',
+          lat: 39.0923, lon: -84.6233,
+          label: 'DELHI TOWNSHIP, OH',
+          coords: '39.0923° N  84.6233° W',
+          status: 'online',
+          listen: 'https://www.broadcastify.com/listen/feed/14527',
+          player: 'https://www.broadcastify.com/webPlayer/14527'
+        }
+      ],
       traffic: [
         {
           key: 'hc-traffic',
           id: '14527',
           name: 'Area Road / Incident Traffic',
           desc: 'Via primary Hamilton County dispatch',
-          lat: 39.1031, lon: -84.5120,
-          label: 'CINCINNATI, OH',
-          coords: '39.1031° N  84.5120° W',
-          status: 'online',
-          listen: 'https://www.broadcastify.com/listen/feed/14527',
-          player: 'https://www.broadcastify.com/webPlayer/14527'
-        }
-      ],
-      metro: [
-        {
-          key: 'hc-metro',
-          id: '14527',
-          name: 'Hamilton County Metro Agencies',
-          desc: 'Norwood, Colerain, Green Twp & area via county feed',
           lat: 39.1031, lon: -84.5120,
           label: 'CINCINNATI, OH',
           coords: '39.1031° N  84.5120° W',
@@ -695,7 +649,6 @@
     updateClock();
     setInterval(updateClock, 20000);
 
-    // Waveform
     const waveform = document.getElementById('waveform');
     for (let i = 0; i < 48; i++) {
       const bar = document.createElement('div');
@@ -723,7 +676,6 @@
     function initMaps() {
       const tiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
       const opts = { zoomControl: false, attributionControl: false };
-
       map = L.map('map', opts).setView([39.1031, -84.5120], 11);
       L.tileLayer(tiles, { maxZoom: 19, subdomains: 'abcd' }).addTo(map);
       marker = L.circleMarker([39.1031, -84.5120], {
@@ -732,14 +684,11 @@
       areaCircle = L.circle([39.1031, -84.5120], {
         radius: 3500, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 1
       }).addTo(map);
-
       fullMap = L.map('full-map', { zoomControl: true, attributionControl: false }).setView([39.1031, -84.5120], 12);
       L.tileLayer(tiles, { maxZoom: 19, subdomains: 'abcd' }).addTo(fullMap);
       fullMarker = L.circleMarker([39.1031, -84.5120], {
         radius: 13, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.9, weight: 2
       }).addTo(fullMap);
-
-      // Force correct size after layout
       setTimeout(() => { map.invalidateSize(); }, 150);
       setTimeout(() => { map.invalidateSize(); }, 500);
     }
@@ -752,7 +701,8 @@
       const ll = [feed.lat, feed.lon];
       marker.setLatLng(ll);
       areaCircle.setLatLng(ll);
-      map.setView(ll, feed.key && feed.key.indexOf('delhi') >= 0 ? 12 : 11);
+      const isDelhi = (feed.key && feed.key.indexOf('delhi') >= 0) || (feed.label && feed.label.indexOf('DELHI') >= 0);
+      map.setView(ll, isDelhi ? 13 : 11);
       if (fullMarker) {
         fullMarker.setLatLng(ll);
         fullMap.setView(ll, 12);
@@ -791,22 +741,18 @@
       updateMapForFeed(feed);
       document.getElementById('now-playing').innerHTML = '<strong>' + feed.name + '</strong>';
       document.getElementById('listen-btn').href = feed.listen;
-
-      // Load official Broadcastify player so audio can be heard
       const iframe = document.getElementById('bcfy-player');
       iframe.src = feed.player + '?bc=0';
-
       document.querySelectorAll('.feed-item').forEach(el => {
         el.classList.toggle('active', el.dataset.key === feed.key);
       });
-
       if (feed.status === 'online') {
         isPlaying = true;
         setPlayUI(true);
         animateWave(true);
         playStart = Date.now();
         startProgress();
-        showToast('Player loaded — tap play in the box or LISTEN LIVE');
+        showToast('Player loaded — tap LISTEN LIVE to hear');
       } else {
         isPlaying = false;
         setPlayUI(false);
@@ -834,7 +780,6 @@
       }, 1000);
     }
 
-    // Categories
     document.querySelectorAll('.cat-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -846,7 +791,6 @@
       });
     });
 
-    // Play button → open official free player (guaranteed audio)
     document.getElementById('play-btn').addEventListener('click', () => {
       if (!currentFeed) return;
       if (currentFeed.status === 'offline') {
@@ -876,7 +820,6 @@
       document.getElementById('vol-thumb').style.left = v + '%';
     });
 
-    // Nav
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -940,7 +883,6 @@
       selectFeed(FEEDS.dispatch[0]);
     });
 
-    // Keep map sized on orientation / resize
     window.addEventListener('resize', () => {
       if (map) map.invalidateSize();
       if (fullMap) fullMap.invalidateSize();
