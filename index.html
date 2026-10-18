@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cincinnati Area Police Scanner | Including Delhi Township</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #3b82f6;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.4rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .badge {
+      display: inline-block;
+      background: #166534;
+      color: #bbf7d0;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      margin-top: 0.5rem;
+    }
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid #334155;
+    }
+    .card h2 {
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+    }
+    .card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .player-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9-ish for players */
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .player-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .links {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+    .links a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .links a:hover { text-decoration: underline; }
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid #334155;
+      padding-top: 1.5rem;
+    }
+    .delhi-note {
+      background: #1e3a5f;
+      border-left: 4px solid var(--accent);
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cincinnati Area Police Scanner</h1>
+    <p class="subtitle">Hamilton County • Cincinnati PD/FD • Delhi Township</p>
+    <span class="badge">Strictly Cincinnati Area</span>
+  </header>
+
+  <div class="delhi-note">
+    <strong>Delhi Township included</strong><br>
+    Delhi PD (TG 21203 / 31 DLHI PD) and Delhi Fire (TG 21204) ride on the main Hamilton County feed below. Western Law Dispatch (31 LE WEST) covers the Delhi area.
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Hamilton County Police, Fire & EMS</h2>
+      <p>Primary feed for suburban agencies including Delhi Township, Norwood, Colerain, Green Twp, and county law/fire/EMS.</p>
+      <div class="player-wrapper">
+        <iframe src="https://www.broadcastify.com/webPlayer/14527" allow="autoplay" title="Hamilton County Scanner"></iframe>
+      </div>
+      <div class="links">
+        <a href="https://www.broadcastify.com/listen/feed/14527" target="_blank" rel="noopener">Open on Broadcastify →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cincinnati Fire & EMS</h2>
+      <p>City of Cincinnati Fire Department (MARCS Zones).</p>
+      <div class="player-wrapper">
+        <iframe src="https://www.broadcastify.com/webPlayer/5184" allow="autoplay" title="Cincinnati Fire Scanner"></iframe>
+      </div>
+      <div class="links">
+        <a href="https://www.broadcastify.com/listen/feed/5184" target="_blank" rel="noopener">Open on Broadcastify →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cincinnati Police</h2>
+      <p>CPD Districts 1–4 (feed status can vary — may be offline).</p>
+      <div class="player-wrapper">
+        <iframe src="https://www.broadcastify.com/webPlayer/32619" allow="autoplay" title="Cincinnati Police Scanner"></iframe>
+      </div>
+      <div class="links">
+        <a href="https://www.broadcastify.com/listen/feed/32619" target="_blank" rel="noopener">Open on Broadcastify →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Data sourced from Broadcastify and RadioReference. For educational / hobby listening only.</p>
+    <p style="margin-top:0.5rem">
+      <a href="https://github.com/joeyfrogge-jpg/cincinnati-police-scanner" style="color:var(--accent)">View on GitHub</a>
+    </p>
+  </footer>
+</body>
+</html>
